@@ -24,8 +24,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  username: z.string().min(4).max(12),
-  password: z.string().min(4).max(12),
+  username: z.string().min(4),
+  password: z.string().min(4),
 });
 
 export function SignInForm() {
@@ -57,7 +57,7 @@ export function SignInForm() {
 
     setIsLoading(false);
 
-    if (res.status === 200) {
+    if (res.code === 200) {
       toast({
         description: res.message,
       });

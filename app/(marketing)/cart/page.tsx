@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 }
 
 export default async function CartPage() {
-  const { isLogin, user }: { isLogin: boolean; user : TUser } = await getMeAction();
+  const { isLogin, user } = await getMeAction();
 
   if (!isLogin) redirect("/");
 
   return (
     <div className="mt-10">
-      <Header userId={user.id} />
+      <Header userId={user?.id} />
       <div className="mt-6 grid grid-cols-4 gap-4 xl:gap-x-6 ">
         <div className="col-span-4 space-y-4 lg:col-span-3 xl:space-y-6">
           <CartItemsList userId={user.id} />

@@ -1,4 +1,5 @@
 import { getMeAction } from "@/actions/authActions";
+import { UserResponse } from "@/api-client";
 import Header from "@/components/templates/(marketing)/Orders/Header";
 import OrdersList from "@/components/templates/(marketing)/Orders/OrdersList";
 import { prisma } from "@/lib/utils";
@@ -28,12 +29,11 @@ const getOrders = cache(async (id: string) => {
 });
 
 export default async function orders() {
-  const { isLogin, user }: { isLogin: boolean; user: TUser } =
-    await getMeAction();
+  const { isLogin, user } = await getMeAction();
 
   if (!isLogin) redirect("/");
 
-  const orders = await getOrders(user.id);
+  const orders = await getOrders(user?.id+"");
 
   return (
     <div className="mt-10">

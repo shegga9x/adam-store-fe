@@ -13,27 +13,20 @@ export default async function DailyInformation({
   allOrders: Omit<TOrder, "OrderItems">[];
   visits: { id: string; createdAt: Date }[];
 }) {
-  const todayOrders = useMemo(
-    () =>
-      allOrders.filter((order) =>
-        checkSameDay(new Date(order.createdAt), new Date()),
-      ),
-    [allOrders],
+  // Compute derived values directly, not with hooks
+  const todayOrders = allOrders.filter((order) =>
+    checkSameDay(new Date(order.createdAt), new Date()),
   );
 
-  const todayIncome = useMemo(
-    () =>
-      todayOrders
-        .filter(
-          (order) =>
-            order.status === ORDER_STATUS.SENDING ||
-            order.status === ORDER_STATUS.COMPLETED,
-        )
-        .reduce((acc, obj) => {
-          return acc + Number(obj.totalPrice);
-        }, 0),
-    [todayOrders],
-  );
+  const todayIncome = todayOrders
+    .filter(
+      (order) =>
+        order.status === ORDER_STATUS.SENDING ||
+        order.status === ORDER_STATUS.COMPLETED,
+    )
+    .reduce((acc, obj) => {
+      return acc + Number(obj.totalPrice);
+    }, 0);
 
   const todayVisits = visits.filter((visit) =>
     checkSameDay(new Date(), new Date(visit.createdAt)),

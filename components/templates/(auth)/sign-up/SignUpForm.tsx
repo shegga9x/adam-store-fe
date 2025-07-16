@@ -24,17 +24,26 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z.object({
-  username: z.string().min(4).max(12),
-  password: z.string().min(4).max(12),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    username: z.string().min(4),
+    password: z.string().min(4),
+    confirmPassword: z.string().min(4),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       username: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -51,14 +60,15 @@ export function SignUpForm() {
 
     const formData = new FormData();
 
+    formData.append("name", values.name);
     formData.append("username", values.username);
     formData.append("password", values.password);
+    formData.append("confirmPassword", values.confirmPassword);
 
     const res = await signUpAction(formData);
 
     setIsLoading(false);
-
-    if (res.status === 201) {
+    if (res.code === 200) {
       router.push("/");
 
       signIn(res.user);
@@ -67,11 +77,11 @@ export function SignUpForm() {
         description: "sign up successfully",
       });
     }
-
-    if (res.status === 409) {
+    if (res.code === 201) {
+      // router.push("/");
+      // signIn(res.user);
       return toast({
-        variant: "destructive",
-        description: "This name has already been used",
+        description: res.message,
       });
     }
 
@@ -79,19 +89,37 @@ export function SignUpForm() {
     return toast({
       variant: "destructive",
       title: "Something went wrong",
-      description: "Try later",
+      description: res.message,
     });
   }
 
   return (
     <Form {...form}>
       <form
-        // action={formSubmitHandler}
         onSubmit={form.handleSubmit(formSubmitHandler)}
         className="w-80 space-y-7 rounded-xl border border-secondary px-7 py-7 font-extrabold shadow-md dark:border-secondary-dark dark:bg-primary-dark dark:shadow-none">
         <h1 className={cn("text-center text-2xl", notoSans.className)}>
           Sign Up
         </h1>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-md font-normal text-gray-700 dark:text-gray-300">
+                Name :{" "}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="name"
+                  {...field}
+                  className="h-11 border-secondary bg-white shadow-none dark:border-secondary-dark dark:bg-transparent"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="username"
@@ -127,7 +155,26 @@ export function SignUpForm() {
                   className="h-11 border-secondary bg-white shadow-none dark:border-secondary-dark dark:bg-transparent"
                 />
               </FormControl>
-              {/* <FormDescription>This is your public display name.</FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-md font-normal text-gray-700 dark:text-gray-300">
+                Confirm Password :{" "}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="confirm password"
+                  {...field}
+                  className="h-11 border-secondary bg-white shadow-none dark:border-secondary-dark dark:bg-transparent"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
