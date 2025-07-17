@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import nodemailer from "nodemailer";
+import axios from "axios";
+import { ApiErrorResponse } from "@/api-client/models/api-error-response";
 
 export const prisma = new PrismaClient();
 
@@ -52,3 +54,15 @@ export function checkSameDay(d1: Date, d2: Date) {
   );
 }
 
+export function extractErrorMessage(error: any, defaultMessage: string = 'Something went wrong.'): ApiErrorResponse {
+  if (axios.isAxiosError(error) && error.response && typeof error.response.data === 'object' && error.response.data !== null) {
+    const apiError = error.response.data as ApiErrorResponse;
+    if (apiError.message) {
+      return apiError; // Return the full API error object
+    }
+  } else if (error as ApiErrorResponse) {
+    return { code: error.code, message: error.message }; // Wrap standard JS errors
+  }
+  // Fallback for unknown error types
+  return { code: 500, message: defaultMessage };
+}

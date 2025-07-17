@@ -57,12 +57,14 @@ export function SignInForm() {
 
     setIsLoading(false);
 
-    if (res.code === 200) {
+    if (res.success) {
       toast({
         description: res.message,
       });
-      signIn(res.data);
-      return router.push("/");
+      if (res.data) {
+        signIn(res.data);
+        return router.push("/");
+      }
     }
 
     toast({

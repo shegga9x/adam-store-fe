@@ -1,18 +1,23 @@
-import { getMeAction } from "@/actions/authActions";
-import { USER_ROLE } from "@/enums";
-import { TUser } from "@/types";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function ProtectAdminRoute({
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore, selectIsAdmin } from "@/stores/authStore";
+
+export default function ProtectAdminRoute({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user }: { user: TUser } = await getMeAction();
-
-  if (user?.role !== USER_ROLE.ADMIN) {
-    redirect("/");
-  }
+  const isAdmin = useAuthStore(selectIsAdmin);
+  const router = useRouter();
+  console.log("ProtectAdminRoute isAdmin:", isAdmin);
+  
+  useEffect(() => {
+    if (!isAdmin) {
+      router.replace("/");
+    }
+  }, [isAdmin, router]);
 
   return <>{children}</>;
 }

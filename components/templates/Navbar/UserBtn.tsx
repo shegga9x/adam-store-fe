@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
 import { USER_ROLE } from "@/enums";
-import { useAuthStore } from "@/stores/authStore";
+import { selectIsAdmin, useAuthStore } from "@/stores/authStore";
 import {
   BadgeDollarSign,
   Lock,
@@ -24,14 +24,14 @@ import Link from "next/link";
 
 export default function UserBtn() {
   const isLogin = useAuthStore((state) => state.isLogin);
-  const username = useAuthStore((state) => state.user?.username);
-  const role = useAuthStore((state) => state.user?.role);
+  const username = useAuthStore((state) => state.user?.email);
   const logout = useAuthStore((state) => state.logout);
+  const isAdmin = useAuthStore(selectIsAdmin);
 
   async function logoutHandler() {
-    const res: { status: number; message: string } = await logoutAction();
+    const res = await logoutAction();
 
-    if (res.status === 200) {
+    if (res.success) {
       logout();
 
       return toast({
@@ -44,6 +44,7 @@ export default function UserBtn() {
     });
   }
 
+
   return (
     <Dialog>
       <DialogTrigger className="flex-center h-9 w-9 rounded-md border border-secondary hover:bg-secondary dark:border-secondary-dark dark:hover:bg-secondary-dark">
@@ -55,7 +56,7 @@ export default function UserBtn() {
             <DialogTitle className="mb-3"> {username} </DialogTitle>
             <div className="w-full border-b border-secondary dark:border-secondary-dark"></div>
             <div className="w-full">
-              {role === USER_ROLE.ADMIN ? (
+              {isAdmin ? (
                 <Link href={"/admin"}>
                   <Button
                     variant="outline"

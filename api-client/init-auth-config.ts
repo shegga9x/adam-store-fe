@@ -8,12 +8,10 @@ export function getAuthConfiguration() {
     const token = cookies().get("token")?.value;
 
     return new Configuration({
-        baseOptions: token
-            ? {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-            : {},
+        baseOptions: token ?
+            {
+                headers:
+                    { Authorization: `Bearer ${token}`, },
+            } : {},
     });
 }

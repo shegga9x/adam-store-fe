@@ -68,21 +68,23 @@ export function SignUpForm() {
     const res = await signUpAction(formData);
 
     setIsLoading(false);
-    if (res.code === 200) {
+    if (res.success) {
       router.push("/");
 
-      signIn(res.user);
+      if (res.data) {
+        signIn(res.data);
+      }
 
       return toast({
         description: "sign up successfully",
       });
     }
-    if (res.code === 201) {
-      // router.push("/");
-      // signIn(res.user);
-      return toast({
-        description: res.message,
-      });
+    if (!res.success) {
+      if (res.code === 201) {
+        return toast({
+          description: res.message,
+        });
+      }
     }
 
     // server error

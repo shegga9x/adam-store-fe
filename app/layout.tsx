@@ -19,17 +19,20 @@ export default async function RootLayout({
         type="image/png"
         sizes="32x32"
       />
-      <body className={cn("bg-white dark:bg-black", roboto.className)}>
-        <GetMe>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange>
-            <VisitCounter>{children}</VisitCounter>
-            <Toaster />
-          </ThemeProvider>
-        </GetMe>
+      <body className={cn(roboto.className)}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="min-h-screen bg-white dark:bg-black">
+            <GetMe>
+              <VisitCounter>{children}</VisitCounter>
+              <Toaster />
+            </GetMe>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
