@@ -1,11 +1,15 @@
+import { fetchAllProductsApi } from "@/lib/data/product";
+import { fetchAllCategoriesApi } from "@/lib/data/category";
+import { prisma } from "@/lib/utils";
+import { Metadata } from "next";
+import { cache } from "react";
+
 import Banners from "@/components/templates/(marketing)/Index/Banners";
 import BestSellers from "@/components/templates/(marketing)/Index/BestSellers";
 import Categories from "@/components/templates/(marketing)/Index/Categories";
 import ChooseUs from "@/components/templates/(marketing)/Index/ChooseUs";
 import { NewestProducts } from "@/components/templates/(marketing)/Index/NewestProducts";
-import { prisma } from "@/lib/utils";
-import { Metadata } from "next";
-import { cache } from "react";
+import { fetchAllCategoriesAction } from "@/actions/categoryActions1";
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -14,12 +18,8 @@ export const metadata: Metadata = {
 
 const getProductsAndCategories = cache(async function () {
   return await Promise.all([
-    prisma.product.findMany({
-      include: {
-        Category: true,
-      },
-    }),
-    prisma.category.findMany(),
+    fetchAllProductsApi(),
+    fetchAllCategoriesApi(),
   ]);
 });
 

@@ -1,0 +1,576 @@
+-- Insert into roles
+-- Only 'ADMIN' and 'USER' roles are present as requested.
+INSERT INTO public.roles (id, name, description, created_at, updated_at) VALUES
+(1, 'ADMIN', 'Administrator role with full access', '2025-07-01', '2025-07-01'),
+(2, 'USER', 'Standard user role for customers', '2025-07-01', '2025-07-01');
+
+
+-- Insert into permissions
+-- All permissions are listed, even if not directly assigned to 'USER' currently,
+-- so 'ADMIN' can still have full control.
+INSERT INTO public.permissions (id, name, module, api_path, method) VALUES
+(1, 'VIEW_USERS', 'Users', '/api/users', 'GET'),
+(2, 'CREATE_USERS', 'Users', '/api/users', 'POST'),
+(3, 'UPDATE_USERS', 'Users', '/api/users/{id}', 'PUT'),
+(4, 'DELETE_USERS', 'Users', '/api/users/{id}', 'DELETE'),
+(5, 'VIEW_PRODUCTS', 'Products', '/api/products', 'GET'),
+(6, 'CREATE_PRODUCTS', 'Products', '/api/products', 'POST'),
+(7, 'UPDATE_PRODUCTS', 'Products', '/api/products/{id}', 'PUT'),
+(8, 'DELETE_PRODUCTS', 'Products', '/api/products/{id}', 'DELETE'),
+(9, 'VIEW_ORDERS', 'Orders', '/api/orders', 'GET'),
+(10, 'UPDATE_ORDERS', 'Orders', '/api/orders/{id}', 'PUT'),
+(11, 'VIEW_CATEGORIES', 'Categories', '/api/categories', 'GET'),
+(12, 'CREATE_CATEGORIES', 'Categories', '/api/categories', 'POST'),
+(13, 'VIEW_REVIEWS', 'Reviews', '/api/reviews', 'GET'),
+(14, 'CREATE_REVIEWS', 'Reviews', '/api/reviews', 'POST'),
+(15, 'MANAGE_ROLES', 'Roles', '/api/roles', 'ALL'),
+(16, 'VIEW_DASHBOARD', 'Dashboard', '/api/dashboard', 'GET'),
+(17, 'UPLOAD_FILES', 'Files', '/api/files/upload', 'POST'),
+(18, 'DELETE_FILES', 'Files', '/api/files/{id}', 'DELETE'),
+(19, 'VIEW_PROMOTIONS', 'Promotions', '/api/promotions', 'GET'),
+(20, 'CREATE_PROMOTIONS', 'Promotions', '/api/promotions', 'POST');
+
+
+-- Insert into role_has_permission
+-- ADMIN role has all permissions. USER role has typical customer permissions.
+INSERT INTO public.role_has_permission (role_id, permission_id) VALUES
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 20), -- ADMIN has all permissions
+(2, 1), (2, 5), (2, 9), (2, 13), (2, 14); -- USER can view users (their own), products, orders (their own), reviews, create reviews
+
+
+-- Insert into users
+INSERT INTO public.users (id, name, email, password, avatar_url, dob, gender, status, created_by, updated_by, created_at, updated_at) VALUES
+(1, 'Admin User', 'admin@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/admin.jpg', '1980-01-15', 'MALE', 'ACTIVE', 'system', 'system', '2025-07-01', '2025-07-16'),
+(2, 'Jane Doe', 'jane.doe@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/jane.jpg', '1990-05-20', 'FEMALE', 'ACTIVE', 'system', 'jane.doe', '2025-07-01', '2025-07-15'),
+(3, 'John Smith', 'john.smith@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/john.jpg', '1985-11-10', 'MALE', 'ACTIVE', 'system', 'john.smith', '2025-07-02', '2025-07-14'),
+(4, 'Alice Brown', 'alice.b@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/alice.jpg', '1992-03-25', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-03', '2025-07-03'),
+(5, 'Bob White', 'bob.w@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/bob.jpg', '1988-08-01', 'MALE', 'INACTIVE', 'system', 'admin@example.com', '2025-07-04', '2025-07-05'),
+(6, 'Charlie Green', 'charlie.g@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/charlie.jpg', '1995-02-14', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-05', '2025-07-05'),
+(7, 'Diana Prince', 'diana.p@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/diana.jpg', '1983-07-07', 'FEMALE', 'ACTIVE', 'system', 'admin@example.com', '2025-07-06', '2025-07-10'),
+(8, 'Ethan Hunt', 'ethan.h@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/ethan.jpg', '1979-09-30', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-07', '2025-07-07'),
+(9, 'Fiona Glenanne', 'fiona.g@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/fiona.jpg', '1991-04-01', 'FEMALE', 'SUSPENDED', 'system', 'admin@example.com', '2025-07-08', '2025-07-09'),
+(10, 'George Costanza', 'george.c@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/george.jpg', '1975-06-12', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-09', '2025-07-09'),
+(11, 'Hannah Montana', 'hannah.m@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/hannah.jpg', '2000-01-01', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-10', '2025-07-10'),
+(12, 'Ivan Drago', 'ivan.d@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/ivan.jpg', '1965-03-03', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-11', '2025-07-11'),
+(13, 'Jessica Day', 'jessica.d@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/jessica.jpg', '1987-09-19', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-12', '2025-07-12'),
+(14, 'Kevin Hart', 'kevin.h@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/kevin.jpg', '1979-07-06', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-13', '2025-07-13'),
+(15, 'Laura Croft', 'laura.c@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/laura.jpg', '1980-02-28', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-14', '2025-07-14'),
+(16, 'Mike Ross', 'mike.r@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/mike.jpg', '1984-10-10', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-15', '2025-07-15'),
+(17, 'Nancy Drew', 'nancy.d@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/nancy.jpg', '1998-12-05', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-16', '2025-07-16'),
+(18, 'Oliver Queen', 'oliver.q@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/oliver.jpg', '1982-01-20', 'MALE', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(19, 'Penny Polanski', 'penny.p@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/penny.jpg', '1993-06-01', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(20, 'Quinn Fabray', 'quinn.f@example.com', '$2a$10$pD6D4D.M6Q.u.h.D.x3YJ.OxXwV.uW/l3Y.oW/l3Y.oW/l3Y.', 'https://example.com/avatars/quinn.jpg', '1994-04-22', 'FEMALE', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17');
+
+
+-- Insert into user_has_role
+-- Admin User (ID 1) has both ADMIN and USER roles. All other users have only the USER role.
+INSERT INTO public.user_has_role (user_id, role_id, state) VALUES
+(1, 1, 'ACTIVE'), -- Admin User is ADMIN
+(1, 2, 'ACTIVE'), -- Admin User is also a USER
+(2, 2, 'ACTIVE'),
+(3, 2, 'ACTIVE'),
+(4, 2, 'ACTIVE'),
+(5, 2, 'INACTIVE'),
+(6, 2, 'ACTIVE'),
+(7, 2, 'ACTIVE'),
+(8, 2, 'ACTIVE'),
+(9, 2, 'SUSPENDED'),
+(10, 2, 'ACTIVE'),
+(11, 2, 'ACTIVE'),
+(12, 2, 'ACTIVE'),
+(13, 2, 'ACTIVE'),
+(14, 2, 'ACTIVE'),
+(15, 2, 'ACTIVE'),
+(16, 2, 'ACTIVE'),
+(17, 2, 'ACTIVE'),
+(18, 2, 'ACTIVE'),
+(19, 2, 'ACTIVE'),
+(20, 2, 'ACTIVE');
+
+
+-- Insert into refresh_tokens
+INSERT INTO public.refresh_tokens (id, token, expiry_date) VALUES
+(1, 'mock_refresh_token_1_admin', '2025-08-17 14:35:00'),
+(2, 'mock_refresh_token_2_jane', '2025-08-17 14:35:00'),
+(3, 'mock_refresh_token_3_john', '2025-08-17 14:35:00'),
+(4, 'mock_refresh_token_4_alice', '2025-08-17 14:35:00'),
+(5, 'mock_refresh_token_5_bob', '2025-08-17 14:35:00'),
+(6, 'mock_refresh_token_6_charlie', '2025-08-17 14:35:00'),
+(7, 'mock_refresh_token_7_diana', '2025-08-17 14:35:00'),
+(8, 'mock_refresh_token_8_ethan', '2025-08-17 14:35:00'),
+(9, 'mock_refresh_token_9_fiona', '2025-08-17 14:35:00'),
+(10, 'mock_refresh_token_10_george', '2025-08-17 14:35:00'),
+(11, 'mock_refresh_token_11_hannah', '2025-08-17 14:35:00'),
+(12, 'mock_refresh_token_12_ivan', '2025-08-17 14:35:00'),
+(13, 'mock_refresh_token_13_jessica', '2025-08-17 14:35:00'),
+(14, 'mock_refresh_token_14_kevin', '2025-08-17 14:35:00'),
+(15, 'mock_refresh_token_15_laura', '2025-08-17 14:35:00'),
+(16, 'mock_refresh_token_16_mike', '2025-08-17 14:35:00'),
+(17, 'mock_refresh_token_17_nancy', '2025-08-17 14:35:00'),
+(18, 'mock_refresh_token_18_oliver', '2025-08-17 14:35:00'),
+(19, 'mock_refresh_token_19_penny', '2025-08-17 14:35:00'),
+(20, 'mock_refresh_token_20_quinn', '2025-08-17 14:35:00');
+
+
+-- Insert into provinces (simplified data for Vietnam)
+INSERT INTO public.provinces (id, name) VALUES
+(1, 'Ho Chi Minh City'),
+(2, 'Hanoi'),
+(3, 'Da Nang'),
+(4, 'Can Tho'),
+(5, 'Hai Phong'),
+(6, 'Thua Thien Hue'),
+(7, 'Quang Nam'),
+(8, 'Khanh Hoa'),
+(9, 'Lam Dong'),
+(10, 'Binh Duong'),
+(11, 'Dong Nai'),
+(12, 'Ba Ria - Vung Tau'),
+(13, 'Long An'),
+(14, 'Tien Giang'),
+(15, 'An Giang'),
+(16, 'Kien Giang'),
+(17, 'Ca Mau'),
+(18, 'Dak Lak'),
+(19, 'Gia Lai'),
+(20, 'Kon Tum');
+
+-- Insert into districts (simplified data)
+INSERT INTO public.districts (id, name, province_id) VALUES
+(101, 'District 1', 1),
+(102, 'District 3', 1),
+(103, 'District 5', 1),
+(104, 'District 7', 1),
+(105, 'District Tan Binh', 1),
+(201, 'Ba Dinh', 2),
+(202, 'Cau Giay', 2),
+(203, 'Hoan Kiem', 2),
+(301, 'Hai Chau', 3),
+(302, 'Thanh Khe', 3),
+(401, 'Ninh Kieu', 4),
+(501, 'Ngo Quyen', 5),
+(601, 'Hue City', 6),
+(701, 'Hoi An', 7),
+(801, 'Nha Trang', 8),
+(901, 'Da Lat', 9),
+(1001, 'Thu Dau Mot', 10),
+(1101, 'Bien Hoa', 11),
+(1201, 'Vung Tau City', 12);
+
+-- Insert into wards (simplified data)
+INSERT INTO public.wards (code, name, district_id) VALUES
+('W001', 'Ben Nghe Ward', 101),
+('W002', 'Vo Thi Sau Ward', 103),
+('W003', 'Tan Hung Ward', 104),
+('W004', 'Phuong Mai Ward', 202),
+('W005', 'Tran Hung Dao Ward', 203),
+('W006', 'Hoa Thuan Tay Ward', 301),
+('W007', 'An Khanh Ward', 401),
+('W008', 'Le Loi Ward', 501),
+('W009', 'Phu Nhuan Ward', 105),
+('W010', 'Thanh Xuan Nam Ward', 201),
+('W011', 'Lien Chieu Ward', 302),
+('W012', 'Hung Loi Ward', 401),
+('W013', 'Dong Khoi Ward', 1101),
+('W014', 'Phu My Ward', 1201),
+('W015', 'Ward 1', 901),
+('W016', 'Ward 2', 901),
+('W017', 'Ward Phuoc Hoa', 1001),
+('W018', 'Ward Long Binh', 1101),
+('W019', 'Ward Thang Tam', 1201),
+('W020', 'Ward 3', 601);
+
+
+-- Insert into addresses (linking to users and geographical data)
+INSERT INTO public.addresses (id, is_default, is_visible, status, phone, street_detail, ward_code, district_id, province_id, user_id, created_by, updated_by, created_at, updated_at) VALUES
+(1, TRUE, TRUE, 'ACTIVE', '0901234567', '123 Main St', 'W001', 101, 1, 1, 'system', 'system', '2025-07-01', '2025-07-16'),
+(2, TRUE, TRUE, 'ACTIVE', '0912345678', '45 Nguyen Hue', 'W002', 103, 1, 2, 'system', 'jane.doe', '2025-07-02', '2025-07-15'),
+(3, TRUE, TRUE, 'ACTIVE', '0923456789', '67 Ly Tu Trong', 'W003', 104, 1, 3, 'system', NULL, '2025-07-03', '2025-07-03'),
+(4, FALSE, TRUE, 'ACTIVE', '0934567890', '89 Tran Quoc Toan', 'W004', 202, 2, 4, 'system', NULL, '2025-07-04', '2025-07-04'),
+(5, TRUE, TRUE, 'ACTIVE', '0945678901', '10 Phan Dinh Phung', 'W005', 203, 2, 5, 'system', NULL, '2025-07-05', '2025-07-05'),
+(6, TRUE, TRUE, 'ACTIVE', '0956789012', '11 Bach Dang', 'W006', 301, 3, 6, 'system', NULL, '2025-07-06', '2025-07-06'),
+(7, TRUE, TRUE, 'ACTIVE', '0967890123', '22 Hai Ba Trung', 'W007', 401, 4, 7, 'system', NULL, '2025-07-07', '2025-07-07'),
+(8, TRUE, TRUE, 'ACTIVE', '0978901234', '33 Le Duan', 'W008', 501, 5, 8, 'system', NULL, '2025-07-08', '2025-07-08'),
+(9, TRUE, TRUE, 'ACTIVE', '0989012345', '44 Ham Nghi', 'W009', 105, 1, 9, 'system', NULL, '2025-07-09', '2025-07-09'),
+(10, TRUE, TRUE, 'ACTIVE', '0990123456', '55 Dong Khoi', 'W010', 201, 2, 10, 'system', NULL, '2025-07-10', '2025-07-10'),
+(11, TRUE, TRUE, 'ACTIVE', '0812345678', '66 Pasteur', 'W011', 302, 3, 11, 'system', NULL, '2025-07-11', '2025-07-11'),
+(12, TRUE, TRUE, 'ACTIVE', '0823456789', '77 Dien Bien Phu', 'W012', 401, 4, 12, 'system', NULL, '2025-07-12', '2025-07-12'),
+(13, TRUE, TRUE, 'ACTIVE', '0834567890', '88 Cach Mang Thang Tam', 'W013', 1101, 11, 13, 'system', NULL, '2025-07-13', '2025-07-13'),
+(14, TRUE, TRUE, 'ACTIVE', '0845678901', '99 Nam Ky Khoi Nghia', 'W014', 1201, 12, 14, 'system', NULL, '2025-07-14', '2025-07-14'),
+(15, TRUE, TRUE, 'ACTIVE', '0856789012', '101 Hai Ba Trung', 'W015', 901, 9, 15, 'system', NULL, '2025-07-15', '2025-07-15'),
+(16, TRUE, TRUE, 'ACTIVE', '0867890123', '112 Cong Hoa', 'W016', 901, 9, 16, 'system', NULL, '2025-07-16', '2025-07-16'),
+(17, TRUE, TRUE, 'ACTIVE', '0878901234', '134 Le Loi', 'W017', 1001, 10, 17, 'system', NULL, '2025-07-17', '2025-07-17'),
+(18, TRUE, TRUE, 'ACTIVE', '0889012345', '145 Vo Van Tan', 'W018', 1101, 11, 18, 'system', NULL, '2025-07-17', '2025-07-17'),
+(19, TRUE, TRUE, 'ACTIVE', '0890123456', '156 Truong Sa', 'W019', 1201, 12, 19, 'system', NULL, '2025-07-17', '2025-07-17'),
+(20, TRUE, TRUE, 'ACTIVE', '0701234567', '167 Hoang Dieu', 'W020', 601, 6, 20, 'system', NULL, '2025-07-17', '2025-07-17');
+
+
+-- Insert into branches
+INSERT INTO public.branches (id, name, location, phone, status, created_by, updated_by, created_at, updated_at) VALUES
+(1, 'Central Branch', '123 Main St, Ho Chi Minh City', '0281112223', 'ACTIVE', 'system', 'system', '2025-07-01', '2025-07-10'),
+(2, 'North Branch', '45 Tran Phu, Hanoi', '0243334445', 'ACTIVE', 'system', NULL, '2025-07-02', '2025-07-02'),
+(3, 'South Branch', '67 Nguyen Trai, Can Tho', '0292555666', 'ACTIVE', 'system', NULL, '2025-07-03', '2025-07-03'),
+(4, 'East Branch', '89 Vo Van Kiet, Bien Hoa', '0251777888', 'ACTIVE', 'system', NULL, '2025-07-04', '2025-07-04'),
+(5, 'West Branch', '10 Nguyen Huu Canh, Da Nang', '0236999000', 'ACTIVE', 'system', NULL, '2025-07-05', '2025-07-05'),
+(6, 'Dalat Branch', '11 Le Hong Phong, Da Lat', '0263123123', 'ACTIVE', 'system', NULL, '2025-07-06', '2025-07-06'),
+(7, 'Nha Trang Branch', '22 Tran Phu, Nha Trang', '0258456456', 'ACTIVE', 'system', NULL, '2025-07-07', '2025-07-07'),
+(8, 'Vung Tau Branch', '33 Thuy Van, Vung Tau', '0254789789', 'ACTIVE', 'system', NULL, '2025-07-08', '2025-07-08'),
+(9, 'Binh Duong Branch', '44 Quoc Lo 13, Thu Dau Mot', '0274101101', 'ACTIVE', 'system', NULL, '2025-07-09', '2025-07-09'),
+(10, 'Hue Branch', '55 Hung Vuong, Hue City', '0234202202', 'ACTIVE', 'system', NULL, '2025-07-10', '2025-07-10'),
+(11, 'Long An Branch', '66 Highway 1A, Tan An', '0272303303', 'ACTIVE', 'system', NULL, '2025-07-11', '2025-07-11'),
+(12, 'An Giang Branch', '77 Chau Doc St, Long Xuyen', '0296404404', 'ACTIVE', 'system', NULL, '2025-07-12', '2025-07-12'),
+(13, 'Kien Giang Branch', '88 Tran Phu, Rach Gia', '0297505505', 'ACTIVE', 'system', NULL, '2025-07-13', '2025-07-13'),
+(14, 'Ca Mau Branch', '99 Tran Hung Dao, Ca Mau', '0290606606', 'ACTIVE', 'system', NULL, '2025-07-14', '2025-07-14'),
+(15, 'Dak Lak Branch', '101 Nguyen Tat Thanh, Buon Ma Thuot', '0262707707', 'ACTIVE', 'system', NULL, '2025-07-15', '2025-07-15'),
+(16, 'Gia Lai Branch', '112 Le Loi, Pleiku', '0269808808', 'ACTIVE', 'system', NULL, '2025-07-16', '2025-07-16'),
+(17, 'Kon Tum Branch', '123 Phan Dinh Phung, Kon Tum', '0260909909', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(18, 'Quang Nam Branch', '134 Hung Vuong, Tam Ky', '0235112112', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(19, 'Tien Giang Branch', '145 Ap Bac, My Tho', '0273223223', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(20, 'Dong Thap Branch', '156 Le Duan, Cao Lanh', '0277334334', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17');
+
+
+-- Insert into categories
+INSERT INTO public.categories (id, name, description, status, created_by, updated_by, created_at, updated_at) VALUES
+(1, 'T-Shirts', 'Comfortable and stylish T-shirts for everyday wear.', 'ACTIVE', 'system', 'system', '2025-07-01', '2025-07-10'),
+(2, 'Pants', 'Variety of pants including jeans, chinos, and trousers.', 'ACTIVE', 'system', NULL, '2025-07-02', '2025-07-02'),
+(3, 'Dresses', 'Elegant and casual dresses for all occasions.', 'ACTIVE', 'system', NULL, '2025-07-03', '2025-07-03'),
+(4, 'Jackets', 'Warm and fashionable jackets and coats.', 'ACTIVE', 'system', NULL, '2025-07-04', '2025-07-04'),
+(5, 'Skirts', 'Diverse range of skirts in different styles and lengths.', 'ACTIVE', 'system', NULL, '2025-07-05', '2025-07-05'),
+(6, 'Shoes', 'Footwear for men, women, and children.', 'ACTIVE', 'system', NULL, '2025-07-06', '2025-07-06'),
+(7, 'Accessories', 'Hats, belts, scarves, and other fashion accessories.', 'ACTIVE', 'system', NULL, '2025-07-07', '2025-07-07'),
+(8, 'Sweaters', 'Cozy and warm sweaters for cooler weather.', 'ACTIVE', 'system', NULL, '2025-07-08', '2025-07-08'),
+(9, 'Shorts', 'Comfortable shorts for casual and athletic wear.', 'ACTIVE', 'system', NULL, '2025-07-09', '2025-07-09'),
+(10, 'Swimwear', 'Swimsuits and beachwear for all.', 'ACTIVE', 'system', NULL, '2025-07-10', '2025-07-10'),
+(11, 'Activewear', 'Apparel for sports and fitness activities.', 'ACTIVE', 'system', NULL, '2025-07-11', '2025-07-11'),
+(12, 'Formal Wear', 'Suits, tuxedos, and gowns for special events.', 'ACTIVE', 'system', NULL, '2025-07-12', '2025-07-12'),
+(13, 'Underwear', 'Essential undergarments for comfort.', 'ACTIVE', 'system', NULL, '2025-07-13', '2025-07-13'),
+(14, 'Socks', 'Various types of socks for different purposes.', 'ACTIVE', 'system', NULL, '2025-07-14', '2025-07-14'),
+(15, 'Outerwear', 'Heavy coats and rain jackets.', 'ACTIVE', 'system', NULL, '2025-07-15', '2025-07-15'),
+(16, 'Sleepwear', 'Pajamas and nightgowns for comfortable sleep.', 'ACTIVE', 'system', NULL, '2025-07-16', '2025-07-16'),
+(17, 'Bags', 'Handbags, backpacks, and luggage.', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(18, 'Jewelry', 'Rings, necklaces, bracelets, and earrings.', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(19, 'Hats', 'Caps, beanies, and fashion hats.', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17'),
+(20, 'Kids Wear', 'Clothing for children of all ages.', 'ACTIVE', 'system', NULL, '2025-07-17', '2025-07-17');
+
+
+-- Insert into products
+INSERT INTO public.products (id, name, description, is_available, sold_quantity, average_rating, total_reviews, status, created_by, updated_by, created_at, updated_at, category_id) VALUES
+(1, 'Classic Cotton T-Shirt', 'A comfortable and versatile 100% cotton t-shirt, perfect for everyday wear.', TRUE, 1500, 4.5, 300, 'AVAILABLE', 'system', 'system', '2025-07-01', '2025-07-16', 1),
+(2, 'Slim Fit Jeans', 'Stylish slim fit jeans made from high-quality denim with a slight stretch.', TRUE, 1200, 4.2, 250, 'AVAILABLE', 'system', NULL, '2025-07-02', '2025-07-02', 2),
+(3, 'Summer Floral Dress', 'Light and airy floral dress, ideal for summer outings.', TRUE, 800, 4.7, 180, 'AVAILABLE', 'system', NULL, '2025-07-03', '2025-07-03', 3),
+(4, 'Waterproof Rain Jacket', 'Durable and waterproof jacket, perfect for rainy weather and outdoor activities.', TRUE, 600, 4.0, 120, 'AVAILABLE', 'system', NULL, '2025-07-04', '2025-07-04', 4),
+(5, 'Pleated Midi Skirt', 'Elegant pleated midi skirt, suitable for both casual and formal occasions.', TRUE, 750, 4.4, 160, 'AVAILABLE', 'system', NULL, '2025-07-05', '2025-07-05', 5),
+(6, 'Running Sneakers', 'Lightweight and comfortable running shoes with excellent grip.', TRUE, 2000, 4.6, 400, 'AVAILABLE', 'system', NULL, '2025-07-06', '2025-07-06', 6),
+(7, 'Leather Belt', 'Genuine leather belt with a classic buckle, durable and stylish.', TRUE, 900, 4.1, 100, 'AVAILABLE', 'system', NULL, '2025-07-07', '2025-07-07', 7),
+(8, 'Chunky Knit Sweater', 'Warm and cozy chunky knit sweater, perfect for winter.', TRUE, 500, 4.3, 90, 'AVAILABLE', 'system', NULL, '2025-07-08', '2025-07-08', 8),
+(9, 'Athletic Shorts', 'Breathable and flexible shorts for gym workouts or casual wear.', TRUE, 1100, 4.5, 200, 'AVAILABLE', 'system', NULL, '2025-07-09', '2025-07-09', 9),
+(10, 'One-Piece Swimsuit', 'Stylish one-piece swimsuit with quick-drying fabric.', TRUE, 400, 4.6, 70, 'AVAILABLE', 'system', NULL, '2025-07-10', '2025-07-10', 10),
+(11, 'Yoga Leggings', 'High-waisted, moisture-wicking leggings ideal for yoga and exercise.', TRUE, 950, 4.8, 220, 'AVAILABLE', 'system', NULL, '2025-07-11', '2025-07-11', 11),
+(12, 'Mens Business Suit', 'Classic two-piece business suit, perfect for formal events.', TRUE, 300, 4.9, 50, 'AVAILABLE', 'system', NULL, '2025-07-12', '2025-07-12', 12),
+(13, 'Cotton Boxer Briefs (3-Pack)', 'Soft and breathable cotton boxer briefs for ultimate comfort.', TRUE, 1800, 4.4, 150, 'AVAILABLE', 'system', NULL, '2025-07-13', '2025-07-13', 13),
+(14, 'Ankle Socks (6-Pack)', 'Everyday ankle socks, comfortable and durable.', TRUE, 2200, 4.1, 180, 'AVAILABLE', 'system', NULL, '2025-07-14', '2025-07-14', 14),
+(15, 'Winter Parka', 'Heavy-duty insulated parka for extreme cold weather.', TRUE, 250, 4.8, 40, 'AVAILABLE', 'system', NULL, '2025-07-15', '2025-07-15', 15),
+(16, 'Silk Pajama Set', 'Luxurious silk pajama set for comfortable sleep.', TRUE, 350, 4.7, 60, 'AVAILABLE', 'system', NULL, '2025-07-16', '2025-07-16', 16),
+(17, 'Leather Crossbody Bag', 'Stylish and practical leather crossbody bag for daily use.', TRUE, 450, 4.5, 80, 'AVAILABLE', 'system', NULL, '2025-07-17', '2025-07-17', 17),
+(18, 'Sterling Silver Necklace', 'Elegant sterling silver necklace with a delicate pendant.', TRUE, 300, 4.9, 30, 'AVAILABLE', 'system', NULL, '2025-07-17', '2025-07-17', 18),
+(19, 'Baseball Cap', 'Classic cotton baseball cap with adjustable strap.', TRUE, 700, 4.3, 110, 'AVAILABLE', 'system', NULL, '2025-07-17', '2025-07-17', 19),
+(20, 'Kids Graphic T-Shirt', 'Fun and colorful graphic t-shirt for children.', TRUE, 1000, 4.6, 90, 'AVAILABLE', 'system', NULL, '2025-07-17', '2025-07-17', 20);
+
+
+-- Insert into colors
+INSERT INTO public.colors (id, name) VALUES
+(1, 'Black'),
+(2, 'White'),
+(3, 'Red'),
+(4, 'Blue'),
+(5, 'Green'),
+(6, 'Yellow'),
+(7, 'Gray'),
+(8, 'Pink'),
+(9, 'Purple'),
+(10, 'Orange'),
+(11, 'Brown'),
+(12, 'Navy'),
+(13, 'Cyan'),
+(14, 'Magenta'),
+(15, 'Teal'),
+(16, 'Maroon'),
+(17, 'Olive'),
+(18, 'Silver'),
+(19, 'Gold'),
+(20, 'Beige');
+
+
+-- Insert into sizes (ensure all referenced size_id exist)
+INSERT INTO public.sizes (id, name) VALUES
+(1, 'XS'),
+(2, 'S'),
+(3, 'M'),
+(4, 'L'),
+(5, 'XL'),
+(6, 'XXL'),
+(7, '28'),
+(8, '30'),
+(9, '32'),
+(10, '34'),
+(11, '36'),
+(12, '38'),
+(13, '40'),
+(14, '42'),
+(15, '44'),
+(16, '46'),
+(17, 'Kids S'),
+(18, 'Kids M'),
+(19, 'Kids L'),
+(20, 'One Size');
+
+
+-- Insert into files (mock image data)
+INSERT INTO public.files (id, public_id, file_name, image_url, file_type, created_by, created_at) VALUES
+(1, 'tshirt_black_front', 'black_tshirt.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/tshirt_black_front.jpg', 'IMAGE', 'system', '2025-07-01'),
+(2, 'jeans_blue_model', 'blue_jeans_model.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/jeans_blue_model.jpg', 'IMAGE', 'system', '2025-07-02'),
+(3, 'dress_floral_pattern', 'floral_dress.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/dress_floral_pattern.jpg', 'IMAGE', 'system', '2025-07-03'),
+(4, 'jacket_rain_yellow', 'yellow_rain_jacket.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/jacket_rain_yellow.jpg', 'IMAGE', 'system', '2025-07-04'),
+(5, 'skirt_midi_black', 'black_midi_skirt.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/skirt_midi_black.jpg', 'IMAGE', 'system', '2025-07-05'),
+(6, 'sneakers_running_side', 'running_sneakers.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/sneakers_running_side.jpg', 'IMAGE', 'system', '2025-07-06'),
+(7, 'belt_leather_brown', 'brown_leather_belt.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/belt_leather_brown.jpg', 'IMAGE', 'system', '2025-07-07'),
+(8, 'sweater_knit_gray', 'gray_knit_sweater.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/sweater_knit_gray.jpg', 'IMAGE', 'system', '2025-07-08'),
+(9, 'shorts_athletic_navy', 'navy_athletic_shorts.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/shorts_athletic_navy.jpg', 'IMAGE', 'system', '2025-07-09'),
+(10, 'swimsuit_onepiece_blue', 'blue_onepiece_swimsuit.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/swimsuit_onepiece_blue.jpg', 'IMAGE', 'system', '2025-07-10'),
+(11, 'leggings_yoga_black', 'black_yoga_leggings.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/leggings_yoga_black.jpg', 'IMAGE', 'system', '2025-07-11'),
+(12, 'suit_mens_navy', 'navy_mens_suit.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/suit_mens_navy.jpg', 'IMAGE', 'system', '2025-07-12'),
+(13, 'boxer_briefs_cotton', 'cotton_boxer_briefs.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/boxer_briefs_cotton.jpg', 'IMAGE', 'system', '2025-07-13'),
+(14, 'socks_ankle_multi', 'multi_ankle_socks.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/socks_ankle_multi.jpg', 'IMAGE', 'system', '2025-07-14'),
+(15, 'parka_winter_green', 'green_winter_parka.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/parka_winter_green.jpg', 'IMAGE', 'system', '2025-07-15'),
+(16, 'pajama_silk_pink', 'pink_silk_pajama.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/pajama_silk_pink.jpg', 'IMAGE', 'system', '2025-07-16'),
+(17, 'bag_crossbody_red', 'red_crossbody_bag.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/bag_crossbody_red.jpg', 'IMAGE', 'system', '2025-07-17'),
+(18, 'necklace_silver_pendant', 'silver_necklace_pendant.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/necklace_silver_pendant.jpg', 'IMAGE', 'system', '2025-07-17'),
+(19, 'cap_baseball_blue', 'blue_baseball_cap.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/cap_baseball_blue.jpg', 'IMAGE', 'system', '2025-07-17'),
+(20, 'kids_tshirt_graphic', 'graphic_kids_tshirt.jpg', 'https://res.cloudinary.com/yourcloud/image/upload/kids_tshirt_graphic.jpg', 'IMAGE', 'system', '2025-07-17');
+
+
+-- Insert into product_variants (ensure all size_id, color_id, product_id, image_id exist)
+INSERT INTO public.product_variants (id, is_available, price, quantity, status, product_id, color_id, size_id, image_id) VALUES
+(1, TRUE, 19.99, 100, 'ACTIVE', 1, 1, 3, 1),   -- Classic Cotton T-Shirt, Black, M
+(2, TRUE, 19.99, 80, 'ACTIVE', 1, 2, 4, 1),    -- Classic Cotton T-Shirt, White, L
+(3, TRUE, 49.99, 50, 'ACTIVE', 2, 4, 9, 2),    -- Slim Fit Jeans, Blue, 32
+(4, TRUE, 49.99, 40, 'ACTIVE', 2, 1, 8, 2),    -- Slim Fit Jeans, Black, 30
+(5, TRUE, 69.99, 30, 'ACTIVE', 3, 3, 2, 3),    -- Summer Floral Dress, Red (floral), S
+(6, TRUE, 69.99, 25, 'ACTIVE', 3, 8, 3, 3),    -- Summer Floral Dress, Pink (floral), M
+(7, TRUE, 79.99, 20, 'ACTIVE', 4, 6, 4, 4),    -- Waterproof Rain Jacket, Yellow, L
+(8, TRUE, 79.99, 15, 'ACTIVE', 4, 5, 3, 4),    -- Waterproof Rain Jacket, Green, M
+(9, TRUE, 39.99, 60, 'ACTIVE', 5, 1, 3, 5),    -- Pleated Midi Skirt, Black, M
+(10, TRUE, 39.99, 55, 'ACTIVE', 5, 20, 2, 5),  -- Pleated Midi Skirt, Beige, S
+(11, TRUE, 89.99, 70, 'ACTIVE', 6, 2, 15, 6),  -- Running Sneakers, White, 44
+(12, TRUE, 89.99, 65, 'ACTIVE', 6, 7, 14, 6),  -- Running Sneakers, Gray, 42
+(13, TRUE, 29.99, 90, 'ACTIVE', 7, 11, 20, 7), -- Leather Belt, Brown, One Size
+(14, TRUE, 29.99, 85, 'ACTIVE', 7, 1, 20, 7),  -- Leather Belt, Black, One Size
+(15, TRUE, 59.99, 35, 'ACTIVE', 8, 7, 4, 8),   -- Chunky Knit Sweater, Gray, L
+(16, TRUE, 59.99, 30, 'ACTIVE', 8, 12, 3, 8),  -- Chunky Knit Sweater, Navy, M
+(17, TRUE, 24.99, 120, 'ACTIVE', 9, 12, 5, 9), -- Athletic Shorts, Navy, XL
+(18, TRUE, 24.99, 110, 'ACTIVE', 9, 1, 4, 9),  -- Athletic Shorts, Black, L
+(19, TRUE, 49.99, 45, 'ACTIVE', 10, 4, 3, 10), -- One-Piece Swimsuit, Blue, M
+(20, TRUE, 49.99, 40, 'ACTIVE', 10, 8, 2, 10), -- One-Piece Swimsuit, Pink, S
+(21, TRUE, 34.99, 150, 'ACTIVE', 11, 1, 2, 11), -- Yoga Leggings, Black, S
+(22, TRUE, 34.99, 140, 'ACTIVE', 11, 7, 3, 11), -- Yoga Leggings, Gray, M
+(23, TRUE, 199.99, 10, 'ACTIVE', 12, 12, 5, 12),-- Mens Business Suit, Navy, XL
+(24, TRUE, 199.99, 8, 'ACTIVE', 12, 7, 4, 12),  -- Mens Business Suit, Gray, L
+(25, TRUE, 15.99, 200, 'ACTIVE', 13, 2, 3, 13), -- Cotton Boxer Briefs, White, M
+(26, TRUE, 15.99, 180, 'ACTIVE', 13, 1, 4, 13), -- Cotton Boxer Briefs, Black, L
+(27, TRUE, 9.99, 250, 'ACTIVE', 14, 2, 20, 14), -- Ankle Socks, White, One Size
+(28, TRUE, 9.99, 230, 'ACTIVE', 14, 7, 20, 14), -- Ankle Socks, Gray, One Size
+(29, TRUE, 149.99, 12, 'ACTIVE', 15, 5, 5, 15), -- Winter Parka, Green, XL
+(30, TRUE, 149.99, 10, 'ACTIVE', 15, 1, 4, 15); -- Winter Parka, Black, L
+
+
+-- Insert into carts (linking to users)
+INSERT INTO public.carts (id, created_at, updated_at, user_id) VALUES
+(1, '2025-07-10', '2025-07-16', 2),
+(2, '2025-07-11', '2025-07-15', 3),
+(3, '2025-07-12', '2025-07-12', 4),
+(4, '2025-07-13', '2025-07-13', 6),
+(5, '2025-07-14', '2025-07-14', 7),
+(6, '2025-07-15', '2025-07-15', 8),
+(7, '2025-07-16', '2025-07-16', 10),
+(8, '2025-07-17', '2025-07-17', 11),
+(9, '2025-07-17', '2025-07-17', 13),
+(10, '2025-07-17', '2025-07-17', 14),
+(11, '2025-07-17', '2025-07-17', 15),
+(12, '2025-07-17', '2025-07-17', 16),
+(13, '2025-07-17', '2025-07-17', 17),
+(14, '2025-07-17', '2025-07-17', 18),
+(15, '2025-07-17', '2025-07-17', 19),
+(16, '2025-07-17', '2025-07-17', 20);
+
+
+-- Insert into cart_items (linking to carts and product_variants)
+INSERT INTO public.cart_items (id, price, quantity, cart_id, product_variant_id) VALUES
+(1, 19.99, 2, 1, 1),  -- Jane Doe's cart: Black T-Shirt M
+(2, 49.99, 1, 1, 3),  -- Jane Doe's cart: Blue Jeans 32
+(3, 69.99, 1, 2, 5),  -- John Smith's cart: Summer Floral Dress S
+(4, 79.99, 1, 2, 7),  -- John Smith's cart: Yellow Rain Jacket L
+(5, 39.99, 2, 3, 9),  -- Alice Brown's cart: Black Midi Skirt M
+(6, 89.99, 1, 4, 11), -- Charlie Green's cart: White Running Sneakers 44
+(7, 29.99, 1, 4, 13), -- Charlie Green's cart: Brown Leather Belt One Size
+(8, 59.99, 1, 5, 15), -- Diana Prince's cart: Gray Knit Sweater L
+(9, 24.99, 3, 5, 17), -- Diana Prince's cart: Navy Athletic Shorts XL
+(10, 49.99, 1, 6, 19),-- Ethan Hunt's cart: Blue One-Piece Swimsuit M
+(11, 34.99, 2, 7, 21),-- George Costanza's cart: Black Yoga Leggings S
+(12, 199.99, 1, 8, 23),-- Hannah Montana's cart: Navy Mens Business Suit XL
+(13, 15.99, 4, 9, 25),-- Jessica Day's cart: White Cotton Boxer Briefs M
+(14, 9.99, 6, 10, 27), -- Kevin Hart's cart: White Ankle Socks One Size
+(15, 149.99, 1, 11, 29),-- Laura Croft's cart: Green Winter Parka XL
+(16, 35.99, 1, 12, 16),-- Mike Ross's cart: Navy Knit Sweater M (assuming a variant exists)
+(17, 45.99, 1, 13, 18),-- Nancy Drew's cart: Black Athletic Shorts L (assuming a variant exists)
+(18, 55.99, 1, 14, 20),-- Oliver Queen's cart: Pink One-Piece Swimsuit S (assuming a variant exists)
+(19, 25.99, 2, 15, 22),-- Penny Polanski's cart: Gray Yoga Leggings M (assuming a variant exists)
+(20, 15.99, 3, 16, 26);-- Quinn Fabray's cart: Black Cotton Boxer Briefs L (assuming a variant exists)
+
+
+-- Insert into orders (linking to users and addresses)
+INSERT INTO public.orders (id, order_date, total_price, order_status, updated_at, address_id, user_id) VALUES
+(1, '2025-07-15', 89.97, 'COMPLETED', '2025-07-16', 2, 2), -- Jane Doe
+(2, '2025-07-14', 149.98, 'SHIPPED', '2025-07-15', 3, 3), -- John Smith
+(3, '2025-07-13', 79.98, 'DELIVERED', '2025-07-14', 4, 4), -- Alice Brown
+(4, '2025-07-12', 119.98, 'PROCESSING', '2025-07-13', 6, 6), -- Charlie Green
+(5, '2025-07-11', 84.98, 'CANCELLED', '2025-07-12', 7, 7), -- Diana Prince
+(6, '2025-07-10', 49.99, 'COMPLETED', '2025-07-11', 8, 8), -- Ethan Hunt
+(7, '2025-07-09', 69.98, 'SHIPPED', '2025-07-10', 9, 9), -- Fiona Glenanne (suspended user still has old orders)
+(8, '2025-07-08', 199.99, 'DELIVERED', '2025-07-09', 10, 10),-- George Costanza
+(9, '2025-07-07', 63.96, 'PROCESSING', '2025-07-08', 11, 11),-- Hannah Montana
+(10, '2025-07-06', 59.94, 'COMPLETED', '2025-07-07', 12, 12),-- Ivan Drago
+(11, '2025-07-05', 149.99, 'SHIPPED', '2025-07-06', 13, 13),-- Jessica Day
+(12, '2025-07-04', 35.99, 'DELIVERED', '2025-07-05', 14, 14),-- Kevin Hart
+(13, '2025-07-03', 45.99, 'PROCESSING', '2025-07-04', 15, 15),-- Laura Croft
+(14, '2025-07-02', 55.99, 'PENDING', '2025-07-02', 16, 16),-- Mike Ross
+(15, '2025-07-01', 51.98, 'COMPLETED', '2025-07-01', 17, 17),-- Nancy Drew
+(16, '2025-07-16', 75.97, 'SHIPPED', '2025-07-17', 18, 18),-- Oliver Queen
+(17, '2025-07-17', 99.99, 'PROCESSING', '2025-07-17', 1, 1), -- Admin User's order
+(18, '2025-07-17', 29.99, 'PENDING', '2025-07-17', 19, 19),-- Penny Polanski
+(19, '2025-07-17', 39.99, 'PENDING', '2025-07-17', 20, 20),-- Quinn Fabray
+(20, '2025-07-17', 19.99, 'PENDING', '2025-07-17', 2, 2); -- Jane Doe's second order
+
+
+-- Insert into order_items (linking to orders and product_variants)
+INSERT INTO public.order_items (id, quantity, unit_price, product_variant_id, order_id) VALUES
+(1, 1, 19.99, 1, 1),
+(2, 1, 69.99, 5, 1),
+(3, 1, 49.99, 3, 2),
+(4, 1, 79.99, 7, 2),
+(5, 2, 39.99, 9, 3),
+(6, 1, 89.99, 11, 4),
+(7, 1, 29.99, 13, 4),
+(8, 1, 59.99, 15, 5),
+(9, 1, 24.99, 17, 5),
+(10, 1, 49.99, 19, 6),
+(11, 2, 34.99, 21, 7),
+(12, 1, 199.99, 23, 8),
+(13, 4, 15.99, 25, 9),
+(14, 6, 9.99, 27, 10),
+(15, 1, 149.99, 29, 11),
+(16, 1, 35.99, 16, 12),
+(17, 1, 45.99, 18, 13),
+(18, 1, 55.99, 20, 14),
+(19, 2, 25.99, 22, 15),
+(20, 1, 19.99, 2, 16), -- Oliver Queen's order
+(21, 1, 49.99, 3, 17), -- Admin User's order (e.g., they bought a product too)
+(22, 1, 29.99, 13, 18),
+(23, 1, 39.99, 9, 19),
+(24, 1, 19.99, 1, 20);
+
+
+-- Insert into payment_history (linking to orders)
+INSERT INTO public.payment_history (id, is_primary, payment_method, total_amount, payment_status, payment_time, order_id) VALUES
+(1, TRUE, 'CREDIT_CARD', 89.97, 'COMPLETED', '2025-07-15 10:30:00', 1),
+(2, TRUE, 'PAYPAL', 149.98, 'COMPLETED', '2025-07-14 11:00:00', 2),
+(3, TRUE, 'BANK_TRANSFER', 79.98, 'COMPLETED', '2025-07-13 12:15:00', 3),
+(4, TRUE, 'MOMO', 119.98, 'PENDING', '2025-07-12 13:45:00', 4),
+(5, TRUE, 'COD', 84.98, 'FAILED', '2025-07-11 14:00:00', 5),
+(6, TRUE, 'CREDIT_CARD', 49.99, 'COMPLETED', '2025-07-10 15:30:00', 6),
+(7, TRUE, 'PAYPAL', 69.98, 'COMPLETED', '2025-07-09 16:00:00', 7),
+(8, TRUE, 'BANK_TRANSFER', 199.99, 'COMPLETED', '2025-07-08 17:15:00', 8),
+(9, TRUE, 'MOMO', 63.96, 'COMPLETED', '2025-07-07 18:45:00', 9),
+(10, TRUE, 'COD', 59.94, 'COMPLETED', '2025-07-06 19:00:00', 10),
+(11, TRUE, 'CREDIT_CARD', 149.99, 'COMPLETED', '2025-07-05 20:30:00', 11),
+(12, TRUE, 'PAYPAL', 35.99, 'COMPLETED', '2025-07-04 21:00:00', 12),
+(13, TRUE, 'BANK_TRANSFER', 45.99, 'PENDING', '2025-07-03 22:15:00', 13),
+(14, TRUE, 'MOMO', 55.99, 'PENDING', '2025-07-02 23:45:00', 14),
+(15, TRUE, 'COD', 51.98, 'COMPLETED', '2025-07-01 09:00:00', 15),
+(16, TRUE, 'CREDIT_CARD', 75.97, 'COMPLETED', '2025-07-16 10:00:00', 16),
+(17, TRUE, 'PAYPAL', 99.99, 'PENDING', '2025-07-17 14:00:00', 17),
+(18, TRUE, 'COD', 29.99, 'PENDING', '2025-07-17 14:10:00', 18),
+(19, TRUE, 'CREDIT_CARD', 39.99, 'PENDING', '2025-07-17 14:20:00', 19),
+(20, TRUE, 'MOMO', 19.99, 'PENDING', '2025-07-17 14:30:00', 20);
+
+
+-- Insert into promotions
+INSERT INTO public.promotions (id, code, description, discount_percent, start_date, end_date, status, created_by, updated_by, created_at, updated_at) VALUES
+(1, 'SUMMER20', '20% off all summer collection items.', 20, '2025-06-01', '2025-08-31', 'ACTIVE', 'system', 'system', '2025-05-20', '2025-07-10'),
+(2, 'NEWUSER10', '10% off for new user first purchase.', 10, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2025-01-01', '2025-01-01'),
+(3, 'FREESHIP', 'Free shipping on all orders over $50.', 0, '2025-07-01', '2025-07-31', 'ACTIVE', 'system', NULL, '2025-06-25', '2025-06-25'),
+(4, 'FLASH50', '50% off selected items for 24 hours.', 50, '2025-07-17', '2025-07-18', 'ACTIVE', 'system', NULL, '2025-07-16', '2025-07-16'),
+(5, 'WELCOMEBACK15', '15% off for returning customers.', 15, '2025-07-01', '2025-09-30', 'ACTIVE', 'system', NULL, '2025-06-30', '2025-06-30'),
+(6, 'FALLSALE', 'Autumn collection discount.', 25, '2025-09-01', '2025-10-31', 'UPCOMING', 'system', NULL, '2025-08-01', '2025-08-01'),
+(7, 'CLEARANCE', 'Final clearance sale items.', 70, '2025-01-01', '2025-07-10', 'EXPIRED', 'system', NULL, '2024-12-01', '2025-07-11'),
+(8, 'VIP2025', 'Exclusive 2025 VIP discount.', 30, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2024-12-15', '2024-12-15'),
+(9, 'WEEKEND10', '10% off on weekends.', 10, '2025-07-01', '2025-07-31', 'ACTIVE', 'system', NULL, '2025-06-28', '2025-06-28'),
+(10, 'BIRTHDAYTREAT', 'Special birthday discount.', 20, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2025-01-01', '2025-01-01'),
+(11, 'APPONLY', '10% off for mobile app users.', 10, '2025-07-01', '2025-08-31', 'ACTIVE', 'system', NULL, '2025-06-20', '2025-06-20'),
+(12, 'EMPLOYEEDISC', 'Employee discount.', 40, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2024-12-01', '2024-12-01'),
+(13, 'STUDENT', 'Student discount.', 15, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2025-01-01', '2025-01-01'),
+(14, 'SENIOR', 'Senior citizen discount.', 10, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2025-01-01', '2025-01-01'),
+(15, 'GROUPBUY', 'Discount for group purchases.', 20, '2025-07-01', '2025-07-31', 'ACTIVE', 'system', NULL, '2025-06-25', '2025-06-25'),
+(16, 'LOYALTY5', '5% discount for loyal customers.', 5, '2025-01-01', '2025-12-31', 'ACTIVE', 'system', NULL, '2025-01-01', '2025-01-01'),
+(17, 'PAYDAYDEAL', 'Special discount on payday.', 10, '2025-07-25', '2025-07-26', 'UPCOMING', 'system', NULL, '2025-07-20', '2025-07-20'),
+(18, 'HOLIDAY25', '25% off for holiday season.', 25, '2025-11-20', '2025-12-31', 'UPCOMING', 'system', NULL, '2025-11-01', '2025-11-01'),
+(19, 'INSTAGRAM', '10% off for Instagram followers.', 10, '2025-07-01', '2025-08-31', 'ACTIVE', 'system', NULL, '2025-06-20', '2025-06-20'),
+(20, 'FACEBOOK', '10% off for Facebook fans.', 10, '2025-07-01', '2025-08-31', 'ACTIVE', 'system', NULL, '2025-06-20', '2025-06-20');
+
+
+-- Insert into promotion_usages (linking to users, promotions, and orders)
+-- Ensure order_id corresponds to a COMPLETED/SHIPPED/DELIVERED order for realism
+INSERT INTO public.promotion_usages (id, discount_amount, used_at, user_id, promotion_id, order_id) VALUES
+(1, 17.99, '2025-07-15 10:35:00', 2, 1, 1),  -- Jane Doe used SUMMER20
+(2, 14.99, '2025-07-14 11:05:00', 3, 2, 2),  -- John Smith used NEWUSER10
+(3, 7.99, '2025-07-13 12:20:00', 4, 3, 3),   -- Alice Brown used FREESHIP (discount_amount represents savings, can be 0 for free shipping)
+(4, 11.99, '2025-07-12 13:50:00', 6, 9, 4),  -- Charlie Green used WEEKEND10
+(5, 8.49, '2025-07-11 14:05:00', 7, 5, 5),   -- Diana Prince used WELCOMEBACK15 (even on cancelled order for data)
+(6, 4.99, '2025-07-10 15:35:00', 8, 1, 6),   -- Ethan Hunt used SUMMER20
+(7, 6.99, '2025-07-09 16:05:00', 9, 2, 7),   -- Fiona Glenanne used NEWUSER10
+(8, 19.99, '2025-07-08 17:20:00', 10, 8, 8), -- George Costanza used VIP2025
+(9, 6.39, '2025-07-07 18:50:00', 11, 1, 9),  -- Hannah Montana used SUMMER20
+(10, 5.99, '2025-07-06 19:05:00', 12, 16, 10),-- Ivan Drago used LOYALTY5
+(11, 14.99, '2025-07-05 20:35:00', 13, 2, 11),-- Jessica Day used NEWUSER10
+(12, 3.59, '2025-07-04 21:05:00', 14, 1, 12),-- Kevin Hart used SUMMER20
+(13, 4.59, '2025-07-03 22:20:00', 15, 9, 13),-- Laura Croft used WEEKEND10
+(14, 5.59, '2025-07-02 23:50:00', 16, 1, 14),-- Mike Ross used SUMMER20
+(15, 5.19, '2025-07-01 09:05:00', 17, 2, 15),-- Nancy Drew used NEWUSER10
+(16, 7.59, '2025-07-16 10:05:00', 18, 1, 16),-- Oliver Queen used SUMMER20
+(17, 9.99, '2025-07-17 14:05:00', 1, 2, 17),  -- Admin User used NEWUSER10 for their order
+(18, 2.99, '2025-07-17 14:15:00', 19, 9, 18),
+(19, 3.99, '2025-07-17 14:25:00', 20, 1, 19),
+(20, 1.99, '2025-07-17 14:35:00', 2, 9, 20);
+
+
+-- Insert into reviews (linking to users and products)
+INSERT INTO public.reviews (id, rating, comment, image_urls, created_at, updated_at, user_id, product_id) VALUES
+(1, 5.0, 'Absolutely love this t-shirt! So soft and fits perfectly.', '["https://example.com/reviews/img1.jpg", "https://example.com/reviews/img2.jpg"]', '2025-07-16', '2025-07-16', 2, 1),
+(2, 4.0, 'Good jeans, a bit tight but stylish. The denim quality is great.', '["https://example.com/reviews/img3.jpg"]', '2025-07-15', '2025-07-15', 3, 2),
+(3, 4.5, 'Beautiful dress for summer. Received many compliments!', NULL, '2025-07-14', '2025-07-14', 4, 3),
+(4, 3.5, 'Decent rain jacket, but the color is a bit too bright for my taste.', '["https://example.com/reviews/img4.jpg"]', '2025-07-13', '2025-07-13', 6, 4),
+(5, 5.0, 'My favorite skirt! Versatile and comfortable.', NULL, '2025-07-12', '2025-07-12', 7, 5),
+(6, 4.8, 'Excellent running shoes, very supportive.', '["https://example.com/reviews/img5.jpg", "https://example.com/reviews/img6.jpg"]', '2025-07-11', '2025-07-11', 8, 6),
+(7, 4.0, 'Solid leather belt, good quality for the price.', NULL, '2025-07-10', '2025-07-10', 10, 7),
+(8, 4.2, 'Cozy sweater, but it sheds a little.', '["https://example.com/reviews/img7.jpg"]', '2025-07-09', '2025-07-09', 11, 8),
+(9, 4.5, 'Perfect shorts for the gym. Very breathable.', NULL, '2025-07-08', '2025-07-08', 12, 9),
+(10, 4.7, 'Love this swimsuit, very flattering.', '["https://example.com/reviews/img8.jpg"]', '2025-07-07', '2025-07-07', 13, 10),
+(11, 4.9, 'Best yoga leggings I own! Super comfortable and opaque.', NULL, '2025-07-06', '2025-07-06', 14, 11),
+(12, 5.0, 'High-quality suit, perfect for my business meetings.', '["https://example.com/reviews/img9.jpg"]', '2025-07-05', '2025-07-05', 15, 12),
+(13, 4.3, 'Comfortable boxer briefs. Good value.', NULL, '2025-07-04', '2025-07-04', 16, 13),
+(14, 4.1, 'Standard ankle socks, no complaints.', NULL, '2025-07-03', '2025-07-03', 17, 14),
+(15, 4.8, 'Very warm parka, great for cold winters.', '["https://example.com/reviews/img10.jpg"]', '2025-07-02', '2025-07-02', 18, 15),
+(16, 4.6, 'Luxurious and soft pajama set. Highly recommend!', NULL, '2025-07-01', '2025-07-01', 19, 16),
+(17, 4.5, 'Stylish crossbody bag, perfect size.', '["https://example.com/reviews/img11.jpg"]', '2025-07-17', '2025-07-17', 20, 17),
+(18, 5.0, 'Beautiful necklace, very delicate.', NULL, '2025-07-17', '2025-07-17', 2, 18),
+(19, 4.3, 'Comfortable and good quality baseball cap.', NULL, '2025-07-17', '2025-07-17', 3, 19),
+(20, 4.6, 'My kid loves this t-shirt! Great design.', '["https://example.com/reviews/img12.jpg"]', '2025-07-17', '2025-07-17', 4, 20);
