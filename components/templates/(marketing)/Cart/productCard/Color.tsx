@@ -1,6 +1,6 @@
 import { SquarePen } from "lucide-react";
 
-import { changeCartItemColorAction } from "@/actions/cartActions";
+import { changeCartItemColorAction } from "@/actions/cartActions1";
 import Loader from "@/components/modules/Loader";
 import {
   DropdownMenu,
@@ -30,7 +30,7 @@ export default function Color({
     const res = await changeCartItemColorAction(cartItemId, color);
     setIsLoading(false);
 
-    if (res.status === 202) {
+    if (res.status === 202 && res.cart) {
       setCartItems(res.cart);
     }
   };

@@ -1,6 +1,6 @@
 import { SquarePen } from "lucide-react";
 
-import { changeCartItemSizeAction } from "@/actions/cartActions";
+import { changeCartItemSizeAction } from "@/actions/cartActions1";
 import Loader from "@/components/modules/Loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +31,7 @@ export default function Size({
     const res = await changeCartItemSizeAction(cartItemId, size);
     setIsLoading(false);
 
-    if (res.status === 202) {
+    if (res.status === 202 && res.cart) {
       setCartItems(res.cart);
     }
   };

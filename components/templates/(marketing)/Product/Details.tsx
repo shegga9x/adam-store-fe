@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
 
-import { addToCartAction } from "@/actions/cartActions";
+import { addToCartAction } from "@/actions/cartActions1";
 import Loader from "@/components/modules/Loader";
 import { useToast } from "@/components/ui/use-toast";
 import { notoSans } from "@/config/fonts";
@@ -51,12 +51,14 @@ export default function Details({ product }: { product: TProduct }) {
   async function onAddToCart() {
     setIsLoading(true);
     const res = await addToCartAction(
-      userId || "",
+      userId ? String(userId) : "",
       product.id,
       quantity,
       selectedColor.current,
       selectedSize.current,
     );
+    // console.log(res);
+    
     setIsLoading(false);
 
     if (res.status === 200) {

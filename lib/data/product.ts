@@ -90,6 +90,7 @@ export async function fetchProductDetailByIdApi(id: number): Promise<TProduct> {
 }
 
 export function transformProductResponseToTProduct(apiProduct: ProductResponse): TProduct {
+  
   const defaultMainImage = apiProduct.variants?.[0]?.imageUrl ?? "";
   const allImages = apiProduct.variants?.map(v => v.imageUrl || "").filter(Boolean) ?? [];
   const sizes = apiProduct.variants?.map(v => v.size?.id).filter((id): id is number => typeof id === 'number') ?? [];

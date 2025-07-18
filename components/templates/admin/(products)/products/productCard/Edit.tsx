@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { updateProductAction } from "@/actions/productActions";
+import { updateProductAction } from "@/actions/productActions1";
 import { useEditProductStore } from "@/app/admin/_stores/editProductStore";
 import { useProducts } from "@/app/admin/_stores/productsStore";
 import Loader from "@/components/modules/Loader";
@@ -94,7 +94,9 @@ export default function Edit({ product }: { product: TProduct }) {
     setIsLoading(false);
 
     if (res.status === 200) {
-      setProducts(res.allProducts);
+      if (res.allProducts) {
+        setProducts(res.allProducts);
+      }
 
       return toast({
         description: res.message,

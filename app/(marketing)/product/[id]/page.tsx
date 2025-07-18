@@ -1,6 +1,6 @@
 import Details from "@/components/templates/(marketing)/Product/Details";
 import Gallery from "@/components/templates/(marketing)/Product/Gallery";
-import { prisma } from "@/lib/utils";
+import { fetchProductDetailByIdApi } from "@/lib/data/product";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
@@ -18,16 +18,7 @@ export async function generateMetadata({
 }
 
 const getProduct = cache(async (id: string) => {
-  return await Promise.all([
-    prisma.product.findFirst({
-      where: {
-        id: id,
-      },
-      include: {
-        Category: true,
-      },
-    }),
-  ]);
+  return [await fetchProductDetailByIdApi(Number(id))];
 });
 
 export default async function ProductPage({
@@ -36,7 +27,6 @@ export default async function ProductPage({
   params: { id: string };
 }) {
   const [product] = await getProduct(params.id);
-
   if (!product) notFound();
 
   return (

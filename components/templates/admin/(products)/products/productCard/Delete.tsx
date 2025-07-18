@@ -1,6 +1,6 @@
 import { Trash } from "lucide-react";
 
-import { deleteProductAction } from "@/actions/productActions";
+import { deleteProductAction } from "@/actions/productActions1";
 import { useProducts } from "@/app/admin/_stores/productsStore";
 import Loader from "@/components/modules/Loader";
 import {
@@ -29,7 +29,9 @@ export default function Delete({ id }: { id: string }) {
     setIsLoading(false);
 
     if (res.status === 202) {
-      setProducts(res.allProducts);
+      if (res.allProducts) {
+        setProducts(res.allProducts);
+      }
 
       return toast({
         description: res.message,

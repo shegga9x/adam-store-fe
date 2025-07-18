@@ -2,6 +2,7 @@ import { CartControllerApi } from "@/api-client";
 import { getAuthConfiguration } from "@/api-client/init-auth-config";
 import type { CartItemResponse } from "@/api-client/models";
 import { TCartItem } from "@/types";
+import { fetchProductDetailByIdApi } from "./product";
 
 // Define your app's cart item type
 
@@ -16,10 +17,9 @@ function getCartController() {
 /**
  * Transform API CartItemResponse to TCartItem.
  */
-
-export function transformCartItemResponseToTCartItem(apiCartItem: CartItemResponse): TCartItem {
+export async function transformCartItemResponseToTCartItem(apiCartItem: CartItemResponse): Promise<TCartItem> {
     const variant = apiCartItem.productVariantBasic;
-    const product = variant?.product;
+    const product = await fetchProductDetailByIdApi(variant?.product?.id ?? 0); // Assuming this function fetches product details by ID
 
     return {
         id: apiCartItem.id?.toString() ?? "",
@@ -30,27 +30,7 @@ export function transformCartItemResponseToTCartItem(apiCartItem: CartItemRespon
         color: variant?.color?.name ?? "",
         size: variant?.size?.id ?? 0, // Assuming size is represented by ID
         productId: product?.id?.toString() ?? "",
-        Product: {
-            id: variant?.product?.id?.toString() ?? "",
-            title: variant?.product?.name ?? "",
-            price: apiCartItem.price + "", // Placeholder, replace if available in another response
-            description: "",
-            colors: [],
-            sizes: [],
-            quantity: 0,
-            mainImage: "",
-            images: [],
-            gender: "",
-            sales: null,
-            categoryId: "",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            Category: {
-                id: "",
-                title: "",
-                image: ""
-            },
-        },
+        Product: product,
 
         userId: "", // Replace with actual user ID if available from context
     };
@@ -66,5 +46,5 @@ export async function fetchCartItemsApi(page?: number, size?: number, sort?: str
     const response = await api.getCartItemsOfCurrentUser({ page, size, sort });
     // You may want to check response.data.code if your API uses it
     const items = response.data.result?.items ?? [];
-    return items.map(transformCartItemResponseToTCartItem);
+    return Promise.all(items.map(transformCartItemResponseToTCartItem));
 }

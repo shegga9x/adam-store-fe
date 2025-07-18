@@ -1,6 +1,6 @@
 "use client";
 
-import { addProductAction } from "@/actions/productActions";
+import { addProductAction } from "@/actions/productActions1";
 import Loader from "@/components/modules/Loader";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";

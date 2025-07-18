@@ -1,7 +1,7 @@
 import {
   changeCartItemQuantityAction,
   deleteCartItemAction,
-} from "@/actions/cartActions";
+} from "@/actions/cartActions1";
 import Loader from "@/components/modules/Loader";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";

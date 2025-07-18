@@ -18,6 +18,7 @@ export default function Gallery({ product }: { product: TProduct }) {
   const [isImageNotFound, setIsImageNotFound] = useState(false);
   const [mainImage, setMainImage] = useState(product.mainImage);
   const [images, setImages] = useState(product.images);
+  const isExternalImage = mainImage?.startsWith("http");
 
   function imageClickHandler(
     event: React.MouseEvent<HTMLImageElement, MouseEvent>,
@@ -44,7 +45,7 @@ export default function Gallery({ product }: { product: TProduct }) {
           )}>
           <Image
             className={cn("h-full w-full object-contain")}
-            src={`/${isImageNotFound ? "images/no-image.jpg" : mainImage}`}
+            src={isExternalImage && !isImageNotFound ? mainImage : `/images/no-image.jpg`}
             alt="none"
             width={500}
             height={500}
@@ -68,7 +69,7 @@ export default function Gallery({ product }: { product: TProduct }) {
               <Image
                 onClick={(event) => imageClickHandler(event, image)}
                 className={cn("h-full w-full object-contain")}
-                src={`/${image}`}
+                src={`${image}`}
                 alt=""
                 width={100}
                 height={100}
