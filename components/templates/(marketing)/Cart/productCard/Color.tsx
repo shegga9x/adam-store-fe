@@ -1,6 +1,6 @@
 import { SquarePen } from "lucide-react";
 
-import { changeCartItemColorAction } from "@/actions/cartActions1";
+import { changeCartItemColorAction } from "@/actions/cartActions";
 import Loader from "@/components/modules/Loader";
 import {
   DropdownMenu,

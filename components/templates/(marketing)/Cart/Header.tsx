@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { EllipsisVertical, Trash } from "lucide-react";
 
-import { deleteAllCartItemsAction } from "@/actions/cartActions1";
+import { deleteAllCartItemsAction } from "@/actions/cartActions";
 import Loader from "@/components/modules/Loader";
 import {
   DropdownMenu,

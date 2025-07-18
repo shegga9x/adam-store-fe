@@ -1,4 +1,4 @@
-import { getAllProductsAction } from "@/actions/productActions1";
+import { getAllProductsAction } from "@/actions/productActions";
 import { TProduct } from "@/types";
 import { cache, useEffect, useState } from "react";
 

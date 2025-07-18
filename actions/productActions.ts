@@ -1,367 +1,186 @@
 "use server";
 
-import { saveFile } from "@/lib/saveFile";
-import { z } from "zod";
-import { getMeAction } from "./authActions";
-import { prisma } from "@/lib/utils";
-import { USER_ROLE } from "@/enums";
-import { TUser } from "@/types";
+import {
+  createProductApi,
+  updateProductApi,
+  deleteProductApi,
+  fetchAllProductsApi,
+  fetchProductDetailByIdApi,
+} from "@/lib/data/product";
+import { extractErrorMessage } from "@/lib/utils";
+import {
+  productCreateSchema,
+  productUpdateSchema,
+} from "@/actions/schema/productSchema";
 
-const schema = z.object({
-  title: z.string().min(4).max(40),
-  price: z.string().min(1),
-  description: z.string().min(8).max(200),
-  colors: z.string().array().min(1).max(8),
-  sizes: z.number().array().min(1).max(8),
-  quantity: z.number().min(1),
-  gender: z.string(),
-  category: z.string(),
-});
-
+// --- Actions ---
 export async function addProductAction(formData: FormData) {
-  const { user }: { user: TUser } = await getMeAction();
-
-  if (user.role !== USER_ROLE.ADMIN)
-    return JSON.parse(
-      JSON.stringify({
-        status: 401,
-        message: "You are not access",
-      }),
-    );
-
-  const {
-    title,
-    price,
-    description,
-    colors,
-    sizes,
-    quantity,
-    gender,
-    category,
-  }: {
-    title: string;
-    price: string;
-    description: string;
-    colors: string[];
-    sizes: number[];
-    quantity: number;
-    gender: string;
-    category: string;
-  } = JSON.parse(JSON.parse(JSON.stringify(formData.get("details"))));
-
-  const mainImage = formData.get("mainImage") as File;
-  let images: File[] = [];
-
-  for (let i = 0; i < 5; i++) {
-    images.push(formData.get(`image-${i}`) as File);
+  // Parse details from formData
+  const detailsRaw = formData.get("details");
+  if (!detailsRaw) {
+    return {
+      status: 400,
+      message: "Missing product details",
+    };
   }
 
-  images = images.filter((value) => value);
+  let details: any;
+  try {
+    details = JSON.parse(JSON.parse(JSON.stringify(detailsRaw)));
+  } catch {
+    return {
+      status: 400,
+      message: "Invalid product details format",
+    };
+  }
 
-  // Validation
+  // Validate using productCreateSchema
+  const validated = productCreateSchema.safeParse(details);
+  if (!validated.success) {
+    return {
+      status: 403,
+      message: "data invalid",
+      errors: validated.error.flatten().fieldErrors,
+    };
+  }
 
-  const validatedFields = schema.safeParse({
-    title,
-    price,
-    description,
-    colors,
-    sizes,
-    quantity,
-    gender,
-    category,
-  });
-
-  // Return early if the form data is invalid
-  if (!validatedFields.success) {
-    return JSON.parse(
-      JSON.stringify({
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: "data invalid",
-        status: 403,
-      }),
-    );
+  // Handle images (mainImage and images)
+  const mainImage = formData.get("mainImage") as File;
+  let images: File[] = [];
+  for (let i = 0; i < 5; i++) {
+    const img = formData.get(`image-${i}`) as File;
+    if (img) images.push(img);
   }
 
   if (!mainImage || images.length < 1) {
-    return JSON.parse(
-      JSON.stringify({
-        message: "images invalid",
-        status: 403,
-      }),
-    );
+    return {
+      status: 403,
+      message: "images invalid",
+    };
   }
 
-  // Upload images
-
-  const uploadImageRes = await uploadImages(mainImage, images);
+  // NOTE: You must implement or import an image upload API for mainImage/images.
+  // Here we just pass the image file names as placeholders.
+  // Replace this with your actual upload logic.
+  const uploadImageRes = {
+    paths: {
+      mainImage: typeof mainImage === "object" && "name" in mainImage ? mainImage.name : "",
+      images: images.map(img => (typeof img === "object" && "name" in img ? img.name : "")),
+    }
+  };
 
   if (!uploadImageRes)
-    return JSON.parse(
-      JSON.stringify({ status: 500, message: "upload image failed" }),
-    );
+    return { status: 500, message: "upload image failed" };
 
   try {
-    // Create Product
+    // Create Product via API
+    const productPayload = {
+      ...validated.data,
+      mainImage: uploadImageRes.paths.mainImage,
+      images: uploadImageRes.paths.images,
+      sales: 0,
+      categoryId: validated.data.categoryId,
+    };
+    const created = await createProductApi(productPayload);
 
-    const product = await prisma.product.create({
-      data: {
-        title,
-        price,
-        description,
-        colors,
-        sizes,
-        quantity,
-        mainImage: uploadImageRes.paths.mainImage,
-        images: uploadImageRes.paths.images,
-        gender,
-        categoryId: category,
-        sales: 0,
-      },
-    });
-
-    return JSON.parse(
-      JSON.stringify({
-        product,
-        status: 201,
-        message: "product created successfully",
-      }),
-    );
+    return {
+      product: created,
+      status: 201,
+      message: "product created successfully",
+    };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        message: "error in create product",
-        error,
-      }),
-    );
+    return {
+      status: 500,
+      message: "error in create product",
+      error,
+    };
   }
-}
-
-async function uploadImages(mainImage: File, images: File[]) {
-  const paths: {
-    mainImage: string;
-    images: string[];
-  } = {
-    mainImage: "",
-    images: [],
-  };
-
-  const res = await saveFile(mainImage, "main-images");
-
-  if (res.status === 500) return false;
-
-  paths.mainImage = res.path as string;
-
-  for (let i = 0; i < images.length; i++) {
-    const res = await saveFile(images.at(i) as File, "images");
-
-    if (res.status === 500) return false;
-
-    paths.images[i] = res.path as string;
-  }
-
-  return {
-    paths,
-  };
 }
 
 export async function getAllProductsAction() {
   try {
-    const products = await prisma.product.findMany({
-      include: {
-        Category: true,
-      },
-    });
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 200,
-        products,
-      }),
-    );
+    const products = await fetchAllProductsApi();
+    return {
+      status: 200,
+      products,
+    };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return {
+      status: 500,
+      error,
+    };
   }
 }
 
-// export async function getProductById(id: string) {
-//   try {
-
-//     const product = await prisma.product.findFirst({
-//       where: {
-//         id,
-//       },
-//     });
-
-//     if (!product)
-//       return JSON.parse(
-//         JSON.stringify({
-//           status: 404,
-//         }),
-//       );
-
-//     return JSON.parse(
-//       JSON.stringify({
-//         status: 200,
-//         product,
-//       }),
-//     );
-//   } catch (error) {
-//     return JSON.parse(
-//       JSON.stringify({
-//         status: 500,
-//         error,
-//       }),
-//     );
-//   }
-// }
-
 export async function deleteProductAction(id: string) {
-  const { user }: { user: TUser } = await getMeAction();
-
-  if (user.role !== USER_ROLE.ADMIN)
-    return JSON.parse(
-      JSON.stringify({
-        status: 401,
-        message: "You are not access",
-      }),
-    );
-
-  if (!id) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 403,
-        message: "data invalid",
-      }),
-    );
-  }
-
   try {
-    const product = await prisma.product.delete({
-      where: {
-        id,
-      },
-    });
-
-    const allProducts = await prisma.product.findMany({
-      include: {
-        Category: true,
-      },
-    });
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 202,
-        message: "Product deleted",
-        allProducts,
-      }),
-    );
+    const deleted = await deleteProductApi(Number(id));
+    const allProducts = await fetchAllProductsApi();
+    return {
+      allProducts,
+      status: 202,
+      message: "Product deleted",
+      deleted,
+    };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return {
+      status: 500,
+      error,
+    };
   }
 }
 
 export async function updateProductAction(formData: FormData) {
-  const { user }: { user: TUser } = await getMeAction();
+  // Parse details from formData
+  const dataRaw = formData.get("data");
+  if (!dataRaw) {
+    return {
+      status: 400,
+      message: "Missing product data",
+    };
+  }
 
-  if (user.role !== USER_ROLE.ADMIN)
-    return JSON.parse(
-      JSON.stringify({
-        status: 401,
-        message: "You are not access",
-      }),
-    );
+  let details: any;
+  try {
+    details = JSON.parse(JSON.parse(JSON.stringify(dataRaw)));
+  } catch {
+    return {
+      status: 400,
+      message: "Invalid product data format",
+    };
+  }
 
-  const {
-    id,
-    title,
-    price,
-    description,
-    colors,
-    sizes,
-    quantity,
-    gender,
-    category,
-  }: {
-    id: string;
-    title: string;
-    price: string;
-    description: string;
-    colors: string[];
-    sizes: number[];
-    quantity: number;
-    gender: string;
-    category: string;
-  } = JSON.parse(JSON.parse(JSON.stringify(formData.get("data"))));
+  // Validate using productUpdateSchema
+  const validated = productUpdateSchema.safeParse(details);
+  if (!validated.success) {
+    return {
+      status: 403,
+      message: "data invalid",
+      errors: validated.error.flatten().fieldErrors,
+    };
+  }
 
-  // Validation
-
-  const validatedFields = schema.safeParse({
-    title,
-    price,
-    description,
-    colors,
-    sizes,
-    quantity,
-    gender,
-    category,
-  });
-
-  // Return early if the form data is invalid
-  if (!validatedFields.success) {
-    return JSON.parse(
-      JSON.stringify({
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: "data invalid",
-        status: 403,
-      }),
-    );
+  if (!details.id) {
+    return {
+      status: 400,
+      message: "Missing product id",
+    };
   }
 
   try {
-    const product = await prisma.product.update({
-      where: {
-        id,
-      },
-      data: {
-        title,
-        price,
-        description,
-        colors,
-        sizes,
-        quantity,
-      },
-    });
-
-    const allProducts = await prisma.product.findMany({
-      include: {
-        Category: true,
-      },
-    });
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 200,
-        message: "Product updated",
-        allProducts,
-      }),
-    );
+    const updated = await updateProductApi(Number(details.id), validated.data);
+    const allProducts = await fetchAllProductsApi();
+    return {
+      allProducts,
+      status: 200,
+      message: "Product updated",
+      updated,
+    };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return {
+      status: 500,
+      error,
+    };
   }
 }
+

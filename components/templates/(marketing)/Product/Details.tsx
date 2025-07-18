@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
 
-import { addToCartAction } from "@/actions/cartActions1";
+import { addToCartAction } from "@/actions/cartActions";
 import Loader from "@/components/modules/Loader";
 import { useToast } from "@/components/ui/use-toast";
 import { notoSans } from "@/config/fonts";

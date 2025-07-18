@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { updateProductAction } from "@/actions/productActions1";
+import { updateProductAction } from "@/actions/productActions";
 import { useEditProductStore } from "@/app/admin/_stores/editProductStore";
 import { useProducts } from "@/app/admin/_stores/productsStore";
 import Loader from "@/components/modules/Loader";

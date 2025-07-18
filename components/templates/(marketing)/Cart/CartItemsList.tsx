@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchCartItemsAction } from "@/actions/cartActions1";
+import { fetchCartItemsAction } from "@/actions/cartActions";
 import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useState } from "react";
 import EmptyCart from "./EmptyCart";

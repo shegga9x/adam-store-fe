@@ -1,6 +1,6 @@
 import { SquarePen } from "lucide-react";
 
-import { changeCartItemSizeAction } from "@/actions/cartActions1";
+import { changeCartItemSizeAction } from "@/actions/cartActions";
 import Loader from "@/components/modules/Loader";
 import { Button } from "@/components/ui/button";
 import {

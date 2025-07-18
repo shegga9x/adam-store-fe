@@ -1,7 +1,6 @@
 import OrdersList from "@/components/templates/admin/(orders)/orders/OrdersList";
 import ReloadOrders from "@/components/templates/admin/(orders)/orders/ReloadOrders";
 import PageTitle from "@/components/templates/admin/PageTitle";
-import { prisma } from "@/lib/utils";
 import { Metadata } from "next";
 import { cache } from "react";
 
@@ -10,20 +9,20 @@ export const metadata: Metadata = {
   description: '...',
 }
 
-const getOrders = cache(async () => {
-  return await prisma.order.findMany({
-    include: {
-      OrderItems: {
-        include: {
-          Product: true,
-        },
-      },
-    },
-  });
-});
+// const getOrders = cache(async () => {
+//   return await prisma.order.findMany({
+//     include: {
+//       OrderItems: {
+//         include: {
+//           Product: true,
+//         },
+//       },
+//     },
+//   });
+// });
 
 export default async function OrdersPage() {
-  const orders = await getOrders();
+  // const orders = await getOrders();
 
   return (
     <div className="relative">
@@ -31,7 +30,7 @@ export default async function OrdersPage() {
         <ReloadOrders />
       </PageTitle>
 
-      <OrdersList orders={orders} />
+      <OrdersList orders={[]} />
     </div>
   );
 }

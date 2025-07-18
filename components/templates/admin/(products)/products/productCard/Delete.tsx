@@ -1,6 +1,6 @@
 import { Trash } from "lucide-react";
 
-import { deleteProductAction } from "@/actions/productActions1";
+import { deleteProductAction } from "@/actions/productActions";
 import { useProducts } from "@/app/admin/_stores/productsStore";
 import Loader from "@/components/modules/Loader";
 import {

@@ -1,6 +1,5 @@
 "use client";
 
-import { addVisitAction, getVisitsAction } from "@/actions/visitActions";
 import { useEffect } from "react";
 
 export default function VisitCounter({
@@ -10,7 +9,7 @@ export default function VisitCounter({
 }) {
   useEffect(() => {
     async function addVisit() {
-      const res = await addVisitAction();
+      // const res = await addVisitAction();
     }
 
     addVisit();

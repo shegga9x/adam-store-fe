@@ -1,6 +1,6 @@
 "use client";
 
-import { subscribeAction } from "@/actions/SubscribeActions";
+// import { subscribeAction } from "@/actions/SubscribeActions";
 import Loader from "@/components/modules/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,20 +17,20 @@ export default function Subscribe() {
   const { toast } = useToast();
 
   const onSubscribe = async () => {
-    setIsLoading(true);
-    const res = await subscribeAction(email);
-    setIsLoading(false);
+    // setIsLoading(true);
+    // // const res = await subscribeAction(email);
+    // setIsLoading(false);
 
-    if (res.error) {
-      return toast({
-        variant: "destructive",
-        description: res.error,
-      });
-    }
+    // if (res.error) {
+    //   return toast({
+    //     variant: "destructive",
+    //     description: res.error,
+    //   });
+    // }
 
-    toast({
-      description: res.message,
-    });
+    // toast({
+    //   description: res.message,
+    // });
   };
 
   return (

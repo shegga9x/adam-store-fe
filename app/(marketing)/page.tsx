@@ -1,6 +1,5 @@
 import { fetchAllProductsApi } from "@/lib/data/product";
 import { fetchAllCategoriesApi } from "@/lib/data/category";
-import { prisma } from "@/lib/utils";
 import { Metadata } from "next";
 import { cache } from "react";
 

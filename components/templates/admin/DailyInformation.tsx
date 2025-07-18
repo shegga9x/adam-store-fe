@@ -1,4 +1,3 @@
-import { getVisitsAction } from "@/actions/visitActions";
 import { notoSans } from "@/config/fonts";
 import { ORDER_STATUS } from "@/enums";
 import { checkSameDay, cn } from "@/lib/utils";
