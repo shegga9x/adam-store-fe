@@ -308,10 +308,10 @@ export class PaymentHistoryControllerApi extends BaseAPI {
  * @export
  */
 export const SearchPaymentHistoriesPaymentStatusEnum = {
-    PAID: 'PAID',
-    PENDING: 'PENDING',
-    REFUNDED: 'REFUNDED',
-    CANCELED: 'CANCELED',
-    FAILED: 'FAILED'
+    Paid: 'PAID',
+    Pending: 'PENDING',
+    Refunded: 'REFUNDED',
+    Canceled: 'CANCELED',
+    Failed: 'FAILED'
 } as const;
 export type SearchPaymentHistoriesPaymentStatusEnum = typeof SearchPaymentHistoriesPaymentStatusEnum[keyof typeof SearchPaymentHistoriesPaymentStatusEnum];

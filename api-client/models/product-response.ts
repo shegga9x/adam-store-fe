@@ -86,8 +86,8 @@ export interface ProductResponse {
 }
 
 export const ProductResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type ProductResponseStatusEnum = typeof ProductResponseStatusEnum[keyof typeof ProductResponseStatusEnum];

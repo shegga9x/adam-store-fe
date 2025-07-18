@@ -31,6 +31,12 @@ export interface ProductVariantBasic {
     'id'?: number;
     /**
      * 
+     * @type {string}
+     * @memberof ProductVariantBasic
+     */
+    'imageUrl'?: string;
+    /**
+     * 
      * @type {EntityBasic}
      * @memberof ProductVariantBasic
      */

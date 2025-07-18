@@ -53,8 +53,8 @@ export interface TopSellingDTO {
 }
 
 export const TopSellingDTOStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type TopSellingDTOStatusEnum = typeof TopSellingDTOStatusEnum[keyof typeof TopSellingDTOStatusEnum];

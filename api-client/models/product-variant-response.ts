@@ -74,8 +74,8 @@ export interface ProductVariantResponse {
 }
 
 export const ProductVariantResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type ProductVariantResponseStatusEnum = typeof ProductVariantResponseStatusEnum[keyof typeof ProductVariantResponseStatusEnum];
