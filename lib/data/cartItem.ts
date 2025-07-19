@@ -53,7 +53,7 @@ export async function fetchCartItemByIdApi(id: number): Promise<TCartItem | null
  */
 export async function createCartItemApi(cartItemRequest: any): Promise<TCartItem | null> {
     const api = getCartItemController();
-    const response = await api.create2(cartItemRequest);
+    const response = await api.create2({cartItemRequest});
     const item = response.data.result;
     if (!item) return null;
     return transformCartItemResponseToTCartItem(item);

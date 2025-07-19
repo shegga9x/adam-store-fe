@@ -14,7 +14,7 @@ import { ApiErrorResponse } from '@/api-client/models/api-error-response';
 import { cookies } from 'next/headers'; // Only accessible on the server
 
 // Import the new refresh function from lib/data/auth
-import { refreshAccessTokenApi } from '@/lib/data/auth';
+import { refreshTokenApi } from '@/lib/data/auth';
 
 let isRefreshing = false;
 let failedQueue: { resolve: (value?: unknown) => void; reject: (reason?: any) => void; }[] = [];
@@ -60,19 +60,19 @@ baseApiClient.interceptors.response.use(
                 if (refreshToken) {
                     try {
                         // Call the refresh API (server-side operation)
-                        const refreshResponse = await refreshAccessTokenApi(refreshToken);
+                        const refreshResponse = await refreshTokenApi({ refreshToken });
 
                         // Update cookies with new access and refresh tokens
-                        if (refreshResponse.result?.accessToken) {
-                            cookies().set("token", refreshResponse.result.accessToken, { httpOnly: true, path: "/", secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+                        if (refreshResponse?.accessToken) {
+                            cookies().set("token", refreshResponse.accessToken, { httpOnly: true, path: "/", secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
                         }
-                        if (refreshResponse.result?.refreshToken) {
-                            cookies().set("refreshToken", refreshResponse.result.refreshToken, { httpOnly: true, path: "/", secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+                        if (refreshResponse?.refreshToken) {
+                            cookies().set("refreshToken", refreshResponse.refreshToken, { httpOnly: true, path: "/", secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
                         }
 
                         // Update the original request's authorization header with the new token
-                        if (refreshResponse.result?.accessToken) {
-                            originalRequest.headers.Authorization = `Bearer ${refreshResponse.result.accessToken}`;
+                        if (refreshResponse?.accessToken) {
+                            originalRequest.headers.Authorization = `Bearer ${refreshResponse.accessToken}`;
                         }
 
                         // Process the queue of failed requests (retry them)

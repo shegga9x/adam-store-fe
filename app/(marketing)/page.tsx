@@ -8,7 +8,6 @@ import BestSellers from "@/components/templates/(marketing)/Index/BestSellers";
 import Categories from "@/components/templates/(marketing)/Index/Categories";
 import ChooseUs from "@/components/templates/(marketing)/Index/ChooseUs";
 import { NewestProducts } from "@/components/templates/(marketing)/Index/NewestProducts";
-import { fetchAllCategoriesAction } from "@/actions/categoryActions1";
 
 export const metadata: Metadata = {
   title: 'Home',

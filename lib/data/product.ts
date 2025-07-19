@@ -1,4 +1,4 @@
-import type { TProduct } from "@/types"; // your local template type
+import type { TProduct, TVariant, TEntityBasic, TColor } from "@/types"; // your local template type
 
 import {
   ProductControllerApi,
@@ -90,34 +90,43 @@ export async function fetchProductDetailByIdApi(id: number): Promise<TProduct> {
 }
 
 export function transformProductResponseToTProduct(apiProduct: ProductResponse): TProduct {
-  
-  const defaultMainImage = apiProduct.variants?.[0]?.imageUrl ?? "";
-  const allImages = apiProduct.variants?.map(v => v.imageUrl || "").filter(Boolean) ?? [];
-  const sizes = apiProduct.variants?.map(v => v.size?.id).filter((id): id is number => typeof id === 'number') ?? [];
-  const colors = apiProduct.variants?.map(v => v.color?.id).filter(id => typeof id === 'string') ?? [];
+  // Group variants by color id
+  const variants = apiProduct.variants ?? [];
+  const groupedByColor: Record<string, TColor> = {};
 
-  const totalQuantity = apiProduct.variants?.reduce((sum, v) => sum + (v.quantity || 0), 0) ?? 0;
-  const price = apiProduct.variants?.[0]?.price?.toString() ?? "0";
+  variants.forEach(v => {
+    const colorId = v.color?.id ?? 0;
+    if (!groupedByColor[colorId]) {
+      groupedByColor[colorId] = {
+        id: colorId,
+        name: v.color?.name ?? "",
+        variants: [],
+      };
+    }
+    const variant: TVariant = {
+      id: v.id,
+      price: v.price,
+      quantity: v.quantity,
+      isAvailable: v.isAvailable,
+      imageUrl: v.imageUrl,
+      status: v.status,
+      size: v.size ? { id: v.size.id, name: v.size.name } : undefined,
+    };
+    groupedByColor[colorId].variants!.push(variant);
+  });
 
   return {
-    id: apiProduct.id?.toString() ?? "",
     title: apiProduct.name ?? "",
-    price: price,
-    description: apiProduct.description ?? "",
-    colors: colors,
-    sizes: sizes,
-    quantity: totalQuantity,
-    mainImage: defaultMainImage,
-    images: allImages,
-    gender: "unisex",
-    sales: apiProduct.soldQuantity ?? null,
-    categoryId: "1",
-    createdAt: new Date(apiProduct.createdAt ?? new Date()),
-    updatedAt: new Date(),
-    Category: {
-      id: "1",
-      title: "Default Category",
-      image: ""
-    }
+    mainImage: apiProduct.variants?.[0]?.imageUrl ?? "",
+    id: apiProduct.id ?? 0,
+    isAvailable: apiProduct.isAvailable,
+    name: apiProduct.name,
+    description: apiProduct.description,
+    averageRating: apiProduct.averageRating,
+    soldQuantity: apiProduct.soldQuantity,
+    totalReviews: apiProduct.totalReviews,
+    status: apiProduct.status,
+    createdAt: apiProduct.createdAt,
+    colors: Object.values(groupedByColor),
   };
 }

@@ -10,6 +10,7 @@ import { fetchCartItemsApi } from "@/lib/data/cart";
 import type { ActionResponse } from "@/lib/types/actions";
 import { extractErrorMessage } from "@/lib/utils";
 import { TCartItem } from "@/types";
+import { CartItemRequest } from "@/api-client";
 
 /**
  * Fetch all cart items for the current user (paginated).
@@ -27,30 +28,12 @@ export async function fetchCartItemsAction(page?: number, size?: number, sort?: 
 /**
  * Add a new cart item using API.
  */
-export async function addToCartAction(
-  userId: string,
-  productId: string,
-  quantity: number,
-  color: string,
-  size: number,
-) {
+export async function addToCartAction(cartItemRequest: CartItemRequest) {
   try {
     // The API expects a cartItemRequest object
-    const cartItemRequest = {
-      userId,
-      productId,
-      quantity,
-      color,
-      size,
-    };
-    if (color == undefined) cartItemRequest.color = "blue"; {
 
-    }
     const item = await createCartItemApi(cartItemRequest);
-
-
-
-    return { status: 200, message: "New product added in your cart", cartItem: null };
+    return { status: 200, message: "New product added in your cart", cartItem: item };
   } catch (error) {
     return { status: 500, message: "Server error", error };
   }

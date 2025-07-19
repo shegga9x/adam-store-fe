@@ -100,3 +100,17 @@ export async function logoutApi(token: string): Promise<void> {
         console.warn("Logout API call failed, but clearing client tokens proceeds:", error.response?.data || error.message);
     }
 }
+
+/**
+ * Refresh the access token using a refresh token.
+ * @param refreshRequest - The refresh token request object.
+ * @returns A Promise that resolves to TokenResponse.
+ */
+export async function refreshTokenApi(refreshRequest: { refreshToken: string }): Promise<TokenResponse> {
+    const authApi = getAuthController();
+    const response = await authApi.refreshToken({ refreshRequest });
+    if (response.data.code !== 200 || !response.data.result) {
+        throw response.data;
+    }
+    return response.data.result;
+}

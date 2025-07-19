@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import nodemailer from "nodemailer";
 import axios from "axios";
 import { ApiErrorResponse } from "@/api-client/models/api-error-response";
+import { TProduct } from "@/types";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -63,4 +64,25 @@ export function extractErrorMessage(error: any, defaultMessage: string = 'Someth
   }
   // Fallback for unknown error types
   return { code: 500, message: defaultMessage };
+}
+export function getAllImagesFromProduct(product: TProduct): string[] {
+  const imageUrls: string[] = [];
+
+  // Add the main image if it exists
+  if (product.mainImage) {
+    imageUrls.push(product.mainImage);
+  }
+
+  // Iterate through colors
+  product.colors?.forEach(color => {
+    // Iterate through variants within each color
+    color.variants?.forEach(variant => {
+      if (variant.imageUrl) {
+        imageUrls.push(variant.imageUrl);
+      }
+    });
+  });
+
+  // Remove duplicates
+  return Array.from(new Set(imageUrls));
 }
