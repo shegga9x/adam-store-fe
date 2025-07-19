@@ -1,7 +1,7 @@
 import { CartItemControllerApi } from "@/api-client";
 import { getAuthConfiguration } from "@/api-client/init-auth-config";
 import type { CartItemResponse } from "@/api-client/models";
-import { TCartItem } from "@/types";
+import { TCartItem, TProduct, TColor, TVariant, TEntityBasic } from "@/types";
 import { fetchProductDetailByIdApi } from "./product";
 
 /**
@@ -18,18 +18,23 @@ function getCartItemController() {
 export async function transformCartItemResponseToTCartItem(apiCartItem: CartItemResponse, productOverride?: any): Promise<TCartItem> {
     const variant = apiCartItem.productVariantBasic;
     // Only fetch product if not provided (prevents recursion)
-    const product = productOverride ?? (variant?.product?.id ? await fetchProductDetailByIdApi(variant.product.id) : null);
+    const product: TProduct | null = productOverride ?? (variant?.product?.id ? await fetchProductDetailByIdApi(variant.product.id) : null);
+
+    // Build TColor[] for the product if available
+    let colors: TColor[] | undefined = undefined;
+    if (product && product.colors && Array.isArray(product.colors)) {
+        colors = product.colors;
+    }
 
     return {
         id: apiCartItem.id?.toString() ?? "",
         quantity: apiCartItem.quantity ?? 0,
-        // price: apiCartItem.price ?? 0,
         createdAt: new Date(), // Replace with actual date if available
         updatedAt: new Date(), // Replace with actual date if available
         color: variant?.color?.name ?? "",
-        size: variant?.size?.id ?? 0,
+        size: variant?.size?.name ?? "",
         productId: product?.id?.toString() ?? "",
-        Product: product,
+        Product: product as TProduct,
         userId: "", // Replace with actual user ID if available from context
     };
 }

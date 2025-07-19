@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 // });
 
 export default async function orders() {
-  const { isLogin, user } = await getMeAction();
+  const { isLogin } = await getMeAction();
 
   if (!isLogin) redirect("/");
 

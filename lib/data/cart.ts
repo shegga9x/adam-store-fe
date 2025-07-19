@@ -28,7 +28,7 @@ export async function transformCartItemResponseToTCartItem(apiCartItem: CartItem
         createdAt: new Date(), // Replace with actual date if available
         updatedAt: new Date(), // Replace with actual date if available
         color: variant?.color?.name ?? "",
-        size: variant?.size?.id ?? 0, // Assuming size is represented by ID
+        size: variant?.size?.name ?? "", // Assuming size is represented by ID
         productId: product?.id?.toString() ?? "",
         Product: product,
 

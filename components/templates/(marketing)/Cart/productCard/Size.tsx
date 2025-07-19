@@ -12,29 +12,32 @@ import {
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 import { useState } from "react";
+import { TEntityBasic } from "@/types";
 
 export default function Size({
   cartItemId,
   size,
   productSizes,
+  onChangeSize,
 }: {
   cartItemId: string;
-  size: number;
-  productSizes: number[];
+  size: string;
+  productSizes: TEntityBasic[];
+  onChangeSize: (size: number) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const setCartItems = useCartStore((state) => state.setCartItems);
 
-  const onChangeSize = async (size: number) => {
-    setIsLoading(true);
-    const res = await changeCartItemSizeAction(cartItemId, size);
-    setIsLoading(false);
+  // const onChangeSize = async (size: number) => {
+  //   setIsLoading(true);
+  //   const res = await changeCartItemSizeAction(cartItemId, size);
+  //   setIsLoading(false);
 
-    if (res.status === 202 && res.cart) {
-      setCartItems(res.cart);
-    }
-  };
+  //   if (res.status === 202 && res.cart) {
+  //     setCartItems(res.cart);
+  //   }
+  // };
 
   return (
     <div className="flex items-center gap-x-2">
@@ -53,17 +56,17 @@ export default function Size({
           </DropdownMenuTrigger>
           <DropdownMenuContent className="flex flex-wrap gap-x-2 p-2">
             {productSizes.map((productSize) => (
-              <DropdownMenuItem key={productSize} className="w-fit p-0 ">
+              <DropdownMenuItem key={productSize.name} className="w-fit p-0 ">
                 <Button
                   size="icon"
                   variant="outline"
                   className={cn(
-                    productSize === size &&
-                      "!bg-neutral-200 dark:!bg-neutral-900",
+                    productSize.name === size &&
+                    "!bg-neutral-200 dark:!bg-neutral-900",
                   )}
-                  onClick={() => onChangeSize(productSize)}
-                  disabled={productSize === size}>
-                  {productSize}
+                  onClick={() => onChangeSize(productSize.id ?? 0)}
+                  disabled={productSize.name === size}>
+                  {productSize.name}
                 </Button>
               </DropdownMenuItem>
             ))}

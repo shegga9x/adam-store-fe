@@ -15,13 +15,16 @@ import { useEffect, useState } from "react";
 export default function Quantity({
   cartItem,
   maxQuantity,
+  isChanged, // Passed as a prop
+  setIsChanged, // Setter for isChanged passed as a prop
 }: {
   cartItem: TCartItem;
   maxQuantity: number;
+  isChanged: boolean; // Type for the new prop
+  setIsChanged: (changed: boolean) => void; // Type for the new setter prop
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(cartItem.quantity);
-  const [isChanged, setIsChanged] = useState(false);
   const [isZero, setIsZero] = useState(false);
 
   const setCartItems = useCartStore((state) => state.setCartItems);
@@ -36,7 +39,7 @@ export default function Quantity({
     } else {
       setIsChanged(false);
     }
-  }, [quantity, cartItem.quantity]);
+  }, [quantity, cartItem.quantity, setIsChanged]); // Add setIsChanged to dependency array
 
   const increaseQuantity = () => {
     if (maxQuantity <= quantity) {
@@ -54,7 +57,7 @@ export default function Quantity({
     setQuantity((prev) => prev - 1);
   };
 
-  const onChangeQuantity = async () => {
+  const onChangeUpdateCartItem = async () => {
     setIsLoading(true);
     const res = await changeCartItemQuantityAction(cartItem.id, quantity);
     setIsLoading(false);
@@ -104,7 +107,7 @@ export default function Quantity({
           )}
           size="icon"
           variant={isZero ? "destructive" : "default"}
-          onClick={() => (isZero ? onDeleteCartItem() : onChangeQuantity())}
+          onClick={() => (isZero ? onDeleteCartItem() : onChangeUpdateCartItem())}
           disabled={isLoading}>
           {isLoading ? <Loader /> : isZero ? <Trash /> : <Check />}
         </Button>

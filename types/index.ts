@@ -15,17 +15,6 @@ export type TCategory = {
   image: string;
 };
 
-export type TCartItem = {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  quantity: number;
-  color: string;
-  size: number;
-  productId: string;
-  Product: TProduct;
-  userId: string;
-};
 
 export type TOrder = {
   OrderItems: TOrderItem[];
@@ -61,6 +50,17 @@ export type TOrderItem = {
     createdAt: Date;
     updatedAt: Date;
   };
+};
+export type TCartItem = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  quantity: number;
+  color: string;
+  size: string;
+  productId: string;
+  Product: TProduct;
+  userId: string;
 };
 
 export type TProduct = {
