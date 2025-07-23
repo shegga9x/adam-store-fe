@@ -1,6 +1,5 @@
 "use client";
 
-import { getAllProductsAction } from "@/actions/productActions";
 import ProductCard from "@/components/modules/ProductCard";
 import ProductCardSkeleton from "@/components/modules/ProductCardSkeleton";
 import { TProduct } from "@/types";

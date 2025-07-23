@@ -368,7 +368,7 @@ export class FileControllerApi extends BaseAPI {
  * @export
  */
 export const GetAllFilesFileTypeEnum = {
-    AVATAR: 'AVATAR',
-    PRODUCT_IMAGE: 'PRODUCT_IMAGE'
+    Avatar: 'AVATAR',
+    ProductImage: 'PRODUCT_IMAGE'
 } as const;
 export type GetAllFilesFileTypeEnum = typeof GetAllFilesFileTypeEnum[keyof typeof GetAllFilesFileTypeEnum];

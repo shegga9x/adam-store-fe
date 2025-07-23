@@ -29,7 +29,9 @@ export default function Delete({ id }: { id: string }) {
     setIsLoading(false);
 
     if (res.status === 202) {
-      setProducts(res.allProducts);
+      if (res.allProducts) {
+        setProducts(res.allProducts);
+      }
 
       return toast({
         description: res.message,

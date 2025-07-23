@@ -12,22 +12,18 @@ import { TProduct } from "@/types";
 
 export default function ProductCard({ id, title, mainImage, price }: TProduct) {
   const [isImageError, setImageError] = useState(false);
-
+  const isExternalImage = mainImage?.startsWith("http");
+  
   return (
     <Card className="card-inverted-border relative grid h-full grid-rows-1 bg-neutral-100 shadow-none dark:bg-neutral-950">
       <CardHeader className="relative h-full !gap-0 bg-transparent p-4">
         {/* <Heart className="absolute right-3 top-3 cursor-pointer text-red-600 transition-all hover:fill-red-600" /> */}
-
         <div className="flex-center h-full max-h-56 w-full overflow-hidden rounded-md py-2 sm:h-72 sm:max-h-none md:h-60 lg:h-[145px] xl:h-44">
           <Image
-            className="size-full overflow-visible rounded-md object-contain p-2"
-            src={`/${isImageError ? "images/no-image.jpg" : mainImage}`}
-            width={300}
+            src={isExternalImage && !isImageError ? mainImage : `/images/no-image.jpg`} width={300}
             height={300}
             alt={title}
-            onError={(event) => {
-              setImageError(true);
-            }}
+            onError={() => { setImageError(true); }}
           />
         </div>
         <CardTitle className="mb-2 line-clamp-1 pt-2 text-2xl md:text-2xl lg:text-xl xl:text-2xl">

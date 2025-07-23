@@ -31,8 +31,6 @@ export function generateToken(data: { username: string }) {
 }
 
 export function verifyToken(token: string) {
-  console.log(jwt.verify(token, process.env.SECRET_KEY));
-  
   return jwt.verify(token, process.env.SECRET_KEY);
 }
 

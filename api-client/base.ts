@@ -19,7 +19,7 @@ import type { Configuration } from './configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 
-export const BASE_PATH = (process.env.API_BASE_PATH || "http://localhost:8080/adamstore").replace(/\/+$/, "");
+export const BASE_PATH = "https://microservices.appf4.io.vn/adamstore".replace(/\/+$/, "");
 
 /**
  *

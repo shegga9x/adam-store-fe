@@ -83,8 +83,8 @@ export interface AddressResponse {
 }
 
 export const AddressResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type AddressResponseStatusEnum = typeof AddressResponseStatusEnum[keyof typeof AddressResponseStatusEnum];

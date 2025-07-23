@@ -71,8 +71,8 @@ export interface CategoryResponse {
 }
 
 export const CategoryResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type CategoryResponseStatusEnum = typeof CategoryResponseStatusEnum[keyof typeof CategoryResponseStatusEnum];

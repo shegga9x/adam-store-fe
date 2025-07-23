@@ -1,155 +1,51 @@
 "use server";
 
-import { z } from "zod";
-import { getMeAction } from "./authActions";
-import { TCartItem, TUser } from "@/types";
-import { prisma } from "@/lib/utils";
-import { ORDER_STATUS } from "@/enums";
-import { revalidatePath } from "next/cache";
+import {
+  fetchCartItemByIdApi,
+  createCartItemApi,
+  updateCartItemApi,
+  deleteCartItemApi
+} from "@/lib/data/cartItem";
+import { fetchCartItemsApi } from "@/lib/data/cart";
+import type { ActionResponse } from "@/lib/types/actions";
+import { extractErrorMessage } from "@/lib/utils";
+import { TCartItem } from "@/types";
+import { CartItemRequest } from "@/api-client";
 
-const addToCartSchema = z.object({
-  userId: z.string(),
-  productId: z.string(),
-  quantity: z.number(),
-  color: z.string(),
-  size: z.number(),
-});
-
-export async function addToCartAction(
-  userId: string,
-  productId: string,
-  quantity: number,
-  color: string,
-  size: number,
-) {
-  const { isLogin }: { isLogin: boolean } = await getMeAction();
-
-  if (!isLogin)
-    return JSON.parse(
-      JSON.stringify({
-        status: 401,
-        message: "You are not login",
-      }),
-    );
-
-  // Validation
-
-  const validatedFields = addToCartSchema.safeParse({
-    userId,
-    productId,
-    quantity,
-    color,
-    size,
-  });
-
-  // Return early if the form data is invalid
-  if (!validatedFields.success) {
-    return JSON.parse(
-      JSON.stringify({
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: "data invalid",
-        status: 403,
-      }),
-    );
-  }
-
+/**
+ * Fetch all cart items for the current user (paginated).
+ */
+export async function fetchCartItemsAction(page?: number, size?: number, sort?: string[]): Promise<ActionResponse<TCartItem[]>> {
   try {
-    const product = await prisma.product.findFirst({
-      where: {
-        id: productId,
-      },
-    });
-
-    if ((product?.quantity as number) < quantity) {
-      return JSON.parse(
-        JSON.stringify({
-          status: 204,
-          message: "There are not enough product in stock",
-        }),
-      );
-    }
-
-    const cart = await prisma.cartItem.findMany({
-      where: {
-        userId,
-      },
-    });
-
-    let isHaveInTheCart = cart?.some((cartItem) => {
-      if (
-        cartItem.productId === productId &&
-        cartItem.color === color &&
-        cartItem.size === size
-      ) {
-        return true;
-      }
-      return false;
-    });
-
-    if (isHaveInTheCart) {
-      return JSON.parse(
-        JSON.stringify({
-          status: 409,
-          message: "This product is added before",
-        }),
-      );
-    }
-
-    const cartItem = await prisma.cartItem.create({
-      data: {
-        quantity,
-        color,
-        size,
-        productId,
-        userId,
-      },
-    });
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 200,
-        message: "New product added in your cart",
-        cartItem,
-      }),
-    );
+    const items = await fetchCartItemsApi(page, size, sort);
+    return { success: true, data: items };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        message: "Server error",
-        error,
-      }),
-    );
+    const extracted = extractErrorMessage(error, "Failed to fetch cart items.");
+    return { success: false, message: extracted.message, apiError: extracted };
+  }
+}
+
+/**
+ * Add a new cart item using API.
+ */
+export async function addToCartAction(cartItemRequest: CartItemRequest) {
+  try {
+    // The API expects a cartItemRequest object
+
+    const item = await createCartItemApi(cartItemRequest);
+    return { status: 200, message: "New product added in your cart", cartItem: item };
+  } catch (error) {
+    return { status: 500, message: "Server error", error };
   }
 }
 
 export async function getCartItemsAction(userId: string) {
-  const { isLogin }: { isLogin: boolean } = await getMeAction();
-
-  if (!isLogin)
-    return JSON.parse(
-      JSON.stringify({
-        status: 401,
-        message: "You are not login",
-      }),
-    );
-
   try {
-    const cart = await getCart(userId);
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 200,
-        cart,
-      }),
-    );
+    // No userId filter in API, so just fetch all for current user
+    const items = await fetchCartItemsApi();
+    return { status: 200, cart: items };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return { status: 500, error };
   }
 }
 
@@ -157,100 +53,36 @@ export async function changeCartItemQuantityAction(
   cartItemId: string,
   quantity: number,
 ) {
-  if (!cartItemId || !quantity)
-    return JSON.parse(
-      JSON.stringify({
-        status: 403,
-        message: "Data invalid",
-      }),
-    );
-
   try {
-    const cartItem = await prisma.cartItem.update({
-      where: {
-        id: cartItemId,
-      },
-      data: {
-        quantity,
-      },
-    });
-
-    const cart = await getCart(cartItem.userId);
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 204,
-        cart,
-      }),
-    );
+    const cartItemUpdateRequest = { quantity };
+    const item = await updateCartItemApi(Number(cartItemId), cartItemUpdateRequest);
+    // Optionally, fetch all items again for updated cart
+    const items = await fetchCartItemsApi();
+    return { status: 204, cart: items };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return { status: 500, error };
   }
 }
 
 export async function deleteCartItemAction(cartItemId: string) {
   try {
-    const cartItem = await prisma.cartItem.delete({
-      where: {
-        id: cartItemId,
-      },
-    });
-
-    const cart = await getCart(cartItem.userId);
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 202,
-        message: "Cart item deleted",
-        cart,
-      }),
-    );
+    await deleteCartItemApi(Number(cartItemId));
+    const items = await fetchCartItemsApi();
+    return { status: 202, message: "Cart item deleted", cart: items };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return { status: 500, error };
   }
 }
 
 export async function deleteAllCartItemsAction(userId: string) {
-  if (!userId) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 403,
-        message: "Data invalid",
-      }),
-    );
-  }
-
   try {
-    await prisma.cartItem.deleteMany({
-      where: {
-        userId,
-      },
-    });
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 204,
-        message: "The shopping cart is empty",
-      }),
-    );
+    // No bulk delete in API, so fetch all and delete one by one
+    const items = await fetchCartItemsApi();
+    const userItems = items.filter(item => item.userId === userId);
+    await Promise.all(userItems.map(item => deleteCartItemApi(Number(item.id))));
+    return { status: 204, message: "The shopping cart is empty" };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-        message: "There is a problem",
-      }),
-    );
+    return { status: 500, error, message: "There is a problem" };
   }
 }
 
@@ -258,40 +90,13 @@ export async function changeCartItemSizeAction(
   cartItemId: string,
   size: number,
 ) {
-  if (!cartItemId || !size) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 403,
-        message: "Data invalid",
-      }),
-    );
-  }
-
   try {
-    const cartItem = await prisma.cartItem.update({
-      where: {
-        id: cartItemId,
-      },
-      data: {
-        size,
-      },
-    });
-
-    const cart = await getCart(cartItem.userId);
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 202,
-        cart,
-      }),
-    );
+    const cartItemUpdateRequest = { size };
+    const item = await updateCartItemApi(Number(cartItemId), cartItemUpdateRequest);
+    const items = await fetchCartItemsApi();
+    return { status: 202, cart: items };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return { status: 500, error };
   }
 }
 
@@ -299,139 +104,27 @@ export async function changeCartItemColorAction(
   cartItemId: string,
   color: string,
 ) {
-  if (!cartItemId || !color) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 403,
-        message: "Data invalid",
-      }),
-    );
-  }
-
   try {
-    const cartItem = await prisma.cartItem.update({
-      where: {
-        id: cartItemId,
-      },
-      data: {
-        color,
-      },
-    });
-
-    const cart = await getCart(cartItem.userId);
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 202,
-        cart,
-      }),
-    );
+    const cartItemUpdateRequest = { color };
+    const item = await updateCartItemApi(Number(cartItemId), cartItemUpdateRequest);
+    const items = await fetchCartItemsApi();
+    return { status: 202, cart: items };
   } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
+    return { status: 500, error };
   }
 }
 
 export async function checkoutAction(address: string) {
-  const { isLogin, user }: { isLogin: boolean; user: TUser } =
-    await getMeAction();
-
-  if (!isLogin)
-    return JSON.parse(
-      JSON.stringify({
-        status: 401,
-        message: "You are not login",
-      }),
-    );
-
-  if (!address || address?.length < 10) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 403,
-        message: "Address not entered",
-      }),
-    );
-  }
-
-  try {
-    const cart = await getCart(user.id);
-
-    if (cart.length < 1) {
-      return JSON.parse(
-        JSON.stringify({
-          status: 204,
-          message: "The cart is empty",
-        }),
-      );
-    }
-
-    let totalPrice = 0;
-
-    cart.forEach((cartItem) => {
-      totalPrice += Number(
-        (
-          cartItem.quantity * Number(cartItem.Product.price) +
-          (Number(cartItem.Product.price) / 100) * 9
-        ).toFixed(2),
-      );
-    });
-
-    const order = await prisma.order.create({
-      data: {
-        totalPrice: totalPrice.toString(),
-        address,
-        userId: user.id,
-        status: ORDER_STATUS.PROGRESS,
-      },
-    });
-
-    cart.forEach(async (cartItem) => {
-      await prisma.orderItem.create({
-        data: {
-          quantity: cartItem.quantity,
-          color: cartItem.color,
-          size: cartItem.size,
-          productId: cartItem.Product.id,
-          orderId: order.id,
-        },
-      });
-    });
-
-    await prisma.cartItem.deleteMany({
-      where: {
-        userId: user.id,
-      },
-    });
-
-    revalidatePath("/");
-
-    return JSON.parse(
-      JSON.stringify({
-        status: 200,
-        message: "Your order has been registered",
-      }),
-    );
-  } catch (error) {
-    return JSON.parse(
-      JSON.stringify({
-        status: 500,
-        error,
-      }),
-    );
-  }
+  // Not implemented: No checkout/order API in cartItem.ts or cart.ts
+  return { status: 501, message: "Checkout API not implemented" };
 }
 
 export async function getCart(userId: string) {
-  return await prisma.cartItem.findMany({
-    where: {
-      userId,
-    },
-    include: {
-      Product: true,
-    },
-  });
+  // Just fetch all items for the current user
+  try {
+    const items = await fetchCartItemsApi();
+    return items.filter(item => item.userId === userId);
+  } catch (error) {
+    return [];
+  }
 }

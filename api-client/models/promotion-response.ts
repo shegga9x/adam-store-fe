@@ -77,8 +77,8 @@ export interface PromotionResponse {
 }
 
 export const PromotionResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type PromotionResponseStatusEnum = typeof PromotionResponseStatusEnum[keyof typeof PromotionResponseStatusEnum];

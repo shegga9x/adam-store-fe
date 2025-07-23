@@ -1,6 +1,6 @@
 "use client";
 
-import { getCartItemsAction } from "@/actions/cartActions";
+import { fetchCartItemsAction } from "@/actions/cartActions";
 import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useState } from "react";
 import EmptyCart from "./EmptyCart";
@@ -14,8 +14,8 @@ export default function CartItemsList({ userId }: { userId: string }) {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const res = await getCartItemsAction(userId);
-      setCartItems(res.cart || []);
+      const res = await fetchCartItemsAction();
+      setCartItems(res.success ? res.data ?? [] : []);
       setIsLoading(false);
     };
 

@@ -17,22 +17,38 @@ import Sizes from "./(Details)/Sizes";
 export default function Details({ product }: { product: TProduct }) {
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const selectedColor = useRef(product.colors[0]);
-  const selectedSize = useRef(product.sizes[0]);
+  const [selectVariant, setSelectVariant] = useState(product.colors?.[0]?.variants?.[0]);
+
+  const selectedColor = useRef(product.colors?.[0]?.id);
+  const selectedSize = useRef(product.colors?.[0]?.variants?.[0]?.size?.id);
 
   const userId = useAuthStore((state) => state.user?.id);
 
   const { toast } = useToast();
 
-  function onChangeColor(color: string) {
+  function onChangeColor(color: number | undefined) {
     selectedColor.current = color;
+    const colorObj = product.colors?.find((c) => c.id === color);
+    let variant = colorObj?.variants?.find(
+      (v) => v.size?.id === selectedSize.current,
+    );
+    if (!variant && colorObj?.variants?.length) {
+      variant = colorObj.variants[0];
+      selectedSize.current = variant.size?.id;
+    }
+    setSelectVariant(variant);
   }
   function onChangeSize(size: number) {
     selectedSize.current = size;
+    setSelectVariant(
+      product.colors?.find((c) => c.id === selectedColor.current)?.variants?.find(
+        (v) => v.size?.id === size),
+    );
+
   }
 
   function increaseQuantity() {
-    if (quantity >= product.quantity) {
+    if (quantity >= (selectVariant?.quantity ?? 0)) {
       toast({
         variant: "destructive",
         description: "Max quantity",
@@ -50,13 +66,13 @@ export default function Details({ product }: { product: TProduct }) {
 
   async function onAddToCart() {
     setIsLoading(true);
-    const res = await addToCartAction(
-      userId || "",
-      product.id,
-      quantity,
-      selectedColor.current,
-      selectedSize.current,
+    const res = await addToCartAction({
+      productVariantId:selectVariant?.id ?? 0,
+      quantity: quantity,
+    }
     );
+    // console.log(res);
+
     setIsLoading(false);
 
     if (res.status === 200) {
@@ -83,18 +99,18 @@ export default function Details({ product }: { product: TProduct }) {
             "text-2xl font-bold text-gray-700 opacity-70 dark:text-gray-300",
             notoSans.className,
           )}>
-          ${product.price}
+          ${selectVariant?.price ?? 0}
         </span>
       </div>
       <h2 className="text-gray-700/80 dark:text-gray-300">
         {product.description}
       </h2>
 
-      <Colors colors={product.colors} onChangeColor={onChangeColor} />
+      <Colors tColors={product.colors ?? []} onChangeColor={onChangeColor} />
 
-      <Sizes sizes={product.sizes} onChangeSize={onChangeSize} />
+      <Sizes tColor={(product.colors ?? [])[0] ?? []} onChangeSize={onChangeSize} />
 
-      {product.quantity ? (
+      {selectVariant?.quantity ? (
         <div className="mt-5 xl:mt-7">
           <span className="text-lg font-medium text-gray-700 dark:text-gray-300">
             Quantity

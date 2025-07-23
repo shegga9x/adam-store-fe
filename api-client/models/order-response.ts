@@ -71,11 +71,11 @@ export interface OrderResponse {
 }
 
 export const OrderResponseOrderStatusEnum = {
-    PENDING: 'PENDING',
-    PROCESSING: 'PROCESSING',
-    SHIPPED: 'SHIPPED',
-    DELIVERED: 'DELIVERED',
-    CANCELLED: 'CANCELLED'
+    Pending: 'PENDING',
+    Processing: 'PROCESSING',
+    Shipped: 'SHIPPED',
+    Delivered: 'DELIVERED',
+    Cancelled: 'CANCELLED'
 } as const;
 
 export type OrderResponseOrderStatusEnum = typeof OrderResponseOrderStatusEnum[keyof typeof OrderResponseOrderStatusEnum];

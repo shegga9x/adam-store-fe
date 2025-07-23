@@ -11,29 +11,32 @@ import {
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
 import { useState } from "react";
+import { TColor } from "@/types";
 
 export default function Color({
   cartItemId,
   color,
   productColors,
+  onChangeColor,
 }: {
   cartItemId: string;
   color: string;
-  productColors: string[];
+  productColors: TColor[];
+    onChangeColor: (color: number | undefined) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const setCartItems = useCartStore((state) => state.setCartItems);
 
-  const onChangeColor = async (color: string) => {
-    setIsLoading(true);
-    const res = await changeCartItemColorAction(cartItemId, color);
-    setIsLoading(false);
+  // const onChangeColor = async (color: string) => {
+  //   setIsLoading(true);
+  //   const res = await changeCartItemColorAction(cartItemId, color);
+  //   setIsLoading(false);
 
-    if (res.status === 202) {
-      setCartItems(res.cart);
-    }
-  };
+  //   if (res.status === 202 && res.cart) {
+  //     setCartItems(res.cart);
+  //   }
+  // };
 
   return (
     <div className="flex items-center gap-x-2">
@@ -54,15 +57,15 @@ export default function Color({
           </DropdownMenuTrigger>
           <DropdownMenuContent className="flex flex-wrap gap-x-2 p-2">
             {productColors.map((productColor) => (
-              <DropdownMenuItem key={productColor} className="w-fit p-0">
+              <DropdownMenuItem key={productColor.id} className="w-fit p-0">
                 <button
                   className={cn(
                     "dark:border-secondary-dark size-7 rounded-full border-2 border-neutral-400 [&.active]:outline [&.active]:outline-offset-2 [&.active]:outline-green-500",
-                    productColor === color && "active",
+                    productColor.name === color && "active",
                   )}
-                  style={{ backgroundColor: productColor }}
-                  onClick={() => onChangeColor(productColor)}
-                  disabled={productColor === color}></button>
+                  style={{ backgroundColor: productColor.name }}
+                  onClick={() => onChangeColor(productColor.id)}
+                  disabled={productColor.name === color}></button>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

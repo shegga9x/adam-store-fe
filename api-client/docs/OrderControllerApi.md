@@ -1,6 +1,6 @@
 # OrderControllerApi
 
-All URIs are relative to *http://localhost:8080/adamstore*
+All URIs are relative to *https://microservices.appf4.io.vn/adamstore*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|

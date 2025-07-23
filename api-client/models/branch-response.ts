@@ -77,8 +77,8 @@ export interface BranchResponse {
 }
 
 export const BranchResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type BranchResponseStatusEnum = typeof BranchResponseStatusEnum[keyof typeof BranchResponseStatusEnum];

@@ -1,17 +1,18 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { TColor, TVariant } from "@/types";
 import { useState } from "react";
 
 type ColorsProps = {
-  colors: string[];
-  onChangeColor: (color: string) => void;
+  tColors: TColor[];
+  onChangeColor: (color: number | undefined) => void;
 };
 
-export default function Colors({ colors, onChangeColor }: ColorsProps) {
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
+export default function Colors({ tColors, onChangeColor }: ColorsProps) {
+  const [selectedColor, setSelectedColor] = useState(tColors[0]?.id);
 
-  function onSelectColor(color: string) {
+  function onSelectColor(color: number) {
     setSelectedColor(color);
     onChangeColor(color);
   }
@@ -22,15 +23,15 @@ export default function Colors({ colors, onChangeColor }: ColorsProps) {
         Select Color:
       </span>
       <div className="select-color flex gap-x-3 pt-3">
-        {colors.map((color) => (
+        {tColors.map((tColor) => (
           <button
-            key={color}
+            key={tColor.id}
             className={cn(
               "size-9 rounded-full border [&.active]:outline [&.active]:outline-offset-2 [&.active]:outline-green-500",
-              color === selectedColor && "active",
+              tColor?.id === selectedColor && "active",
             )}
-            style={{ backgroundColor: color }}
-            onClick={() => onSelectColor(color)}></button>
+            style={{ backgroundColor: tColor.name }}
+            onClick={() => onSelectColor(tColor.id)}></button>
         ))}
       </div>
     </div>

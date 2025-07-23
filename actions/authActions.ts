@@ -2,27 +2,14 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { z } from "zod";
-
 import { signInApi, signUpApi, getMyInfoApi, logoutApi } from '@/lib/data/auth';
 
 import type { ActionResponse } from '@/lib/types/actions';
 import type { UserResponse } from '@/api-client/models';
 import { extractErrorMessage } from '@/lib/utils';
 
-// --- Zod Schemas (no change) ---
-const signInSchema = z.object({
-  username: z.string().min(4, { message: "Username must be at least 4 characters." }),
-  password: z.string().min(4, { message: "Password must be at least 4 characters." }),
-});
-
-const signUpSchema = signInSchema.extend({
-  name: z.string().min(1, { message: "Name is required." }),
-  confirmPassword: z.string().min(4, { message: "Confirm password must be at least 4 characters." }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match.",
-  path: ["confirmPassword"],
-});
+// Import schemas from new schema file
+import { signInSchema, signUpSchema } from './schema/authSchema';
 
 // --- Specific Return Type for getMeAction (no change) ---
 interface GetMeResult extends ActionResponse<UserResponse> {

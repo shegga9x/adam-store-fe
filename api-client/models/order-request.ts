@@ -56,8 +56,8 @@ export interface OrderRequest {
 }
 
 export const OrderRequestPaymentMethodEnum = {
-    VNPAY: 'VNPAY',
-    CASH: 'CASH'
+    Vnpay: 'VNPAY',
+    Cash: 'CASH'
 } as const;
 
 export type OrderRequestPaymentMethodEnum = typeof OrderRequestPaymentMethodEnum[keyof typeof OrderRequestPaymentMethodEnum];

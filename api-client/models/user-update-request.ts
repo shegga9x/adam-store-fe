@@ -47,9 +47,9 @@ export interface UserUpdateRequest {
 }
 
 export const UserUpdateRequestGenderEnum = {
-    FEMALE: 'FEMALE',
-    MALE: 'MALE',
-    OTHER: 'OTHER'
+    Female: 'FEMALE',
+    Male: 'MALE',
+    Other: 'OTHER'
 } as const;
 
 export type UserUpdateRequestGenderEnum = typeof UserUpdateRequestGenderEnum[keyof typeof UserUpdateRequestGenderEnum];

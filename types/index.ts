@@ -1,3 +1,4 @@
+import { size } from './../app/icon';
 import { ORDER_STATUS, USER_ROLE } from "@/enums";
 
 export type TUser = {
@@ -7,23 +8,6 @@ export type TUser = {
   password: string;
 };
 
-export type TProduct = {
-  id: string;
-  title: string;
-  price: string;
-  description: string;
-  colors: string[];
-  sizes: number[];
-  quantity: number;
-  mainImage: string;
-  images: string[];
-  gender: string;
-  sales: number | null;
-  categoryId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  Category: TCategory;
-};
 
 export type TCategory = {
   id: string;
@@ -31,17 +15,6 @@ export type TCategory = {
   image: string;
 };
 
-export type TCartItem = {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  quantity: number;
-  color: string;
-  size: number;
-  productId: string;
-  Product: TProduct;
-  userId: string;
-};
 
 export type TOrder = {
   OrderItems: TOrderItem[];
@@ -78,3 +51,49 @@ export type TOrderItem = {
     updatedAt: Date;
   };
 };
+export type TCartItem = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  quantity: number;
+  color: string;
+  size: string;
+  productId: string;
+  Product: TProduct;
+  userId: string;
+};
+
+export type TProduct = {
+  title: string;
+  mainImage: string;
+  id: number;
+  isAvailable?: boolean;
+  name?: string;
+  description?: string;
+  averageRating?: number;
+  soldQuantity?: number;
+  totalReviews?: number;
+  status?: string; // You can replace with enum if you have ProductResponseStatusEnum
+  createdAt?: string;
+  colors?: TColor[];
+};
+export type TEntityBasic = {
+  id?: number;
+  name?: string;
+};
+
+export type TVariant = {
+  id?: number;
+  price?: number;
+  quantity?: number;
+  isAvailable?: boolean;
+  imageUrl?: string;
+  status?: string;
+  size?: TEntityBasic;
+};
+
+export type TColor = {
+  id: number;
+  name: string;
+  variants?: TVariant[];
+}

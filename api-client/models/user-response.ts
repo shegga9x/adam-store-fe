@@ -98,15 +98,15 @@ export interface UserResponse {
 }
 
 export const UserResponseStatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    Active: 'ACTIVE',
+    Inactive: 'INACTIVE'
 } as const;
 
 export type UserResponseStatusEnum = typeof UserResponseStatusEnum[keyof typeof UserResponseStatusEnum];
 export const UserResponseGenderEnum = {
-    FEMALE: 'FEMALE',
-    MALE: 'MALE',
-    OTHER: 'OTHER'
+    Female: 'FEMALE',
+    Male: 'MALE',
+    Other: 'OTHER'
 } as const;
 
 export type UserResponseGenderEnum = typeof UserResponseGenderEnum[keyof typeof UserResponseGenderEnum];

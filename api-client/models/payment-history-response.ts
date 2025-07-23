@@ -59,11 +59,11 @@ export interface PaymentHistoryResponse {
 }
 
 export const PaymentHistoryResponsePaymentStatusEnum = {
-    PAID: 'PAID',
-    PENDING: 'PENDING',
-    REFUNDED: 'REFUNDED',
-    CANCELED: 'CANCELED',
-    FAILED: 'FAILED'
+    Paid: 'PAID',
+    Pending: 'PENDING',
+    Refunded: 'REFUNDED',
+    Canceled: 'CANCELED',
+    Failed: 'FAILED'
 } as const;
 
 export type PaymentHistoryResponsePaymentStatusEnum = typeof PaymentHistoryResponsePaymentStatusEnum[keyof typeof PaymentHistoryResponsePaymentStatusEnum];

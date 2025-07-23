@@ -1,7 +1,7 @@
 "use client";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cn } from "@/lib/utils";
+import { cn, getAllImagesFromProduct } from "@/lib/utils";
 import { TProduct } from "@/types";
 import Image from "next/image";
 import { useState } from "react";
@@ -16,21 +16,21 @@ const fakeContent = [
 
 export default function Gallery({ product }: { product: TProduct }) {
   const [isImageNotFound, setIsImageNotFound] = useState(false);
-  const [mainImage, setMainImage] = useState(product.mainImage);
-  const [images, setImages] = useState(product.images);
+  const [mainImage, setMainImage] = useState<string | undefined>(product.mainImage);
+  const [images, setImages] = useState(getAllImagesFromProduct(product));
+  const isExternalImage = mainImage?.startsWith("http");
 
   function imageClickHandler(
     event: React.MouseEvent<HTMLImageElement, MouseEvent>,
-    image: string,
+    image: string | undefined,
   ): void {
-    const newImages = images.map((prevImage) => {
-      if (prevImage === image) {
-        return mainImage;
-      }
-
-      return prevImage;
-    });
-    setImages(newImages);
+    // const newImages = images.map((prevImage) => {
+    //   if (prevImage === image) {
+    //     return mainImage;
+    //   }
+    //   return prevImage;
+    // });
+    // setImages(newImages.filter((img): img is string => typeof img === "string"));
     setMainImage(image);
   }
 
@@ -44,7 +44,7 @@ export default function Gallery({ product }: { product: TProduct }) {
           )}>
           <Image
             className={cn("h-full w-full object-contain")}
-            src={`/${isImageNotFound ? "images/no-image.jpg" : mainImage}`}
+            src={isExternalImage && !isImageNotFound && mainImage ? mainImage : `/images/no-image.jpg`}
             alt="none"
             width={500}
             height={500}
@@ -68,7 +68,7 @@ export default function Gallery({ product }: { product: TProduct }) {
               <Image
                 onClick={(event) => imageClickHandler(event, image)}
                 className={cn("h-full w-full object-contain")}
-                src={`/${image}`}
+                src={`${image}`}
                 alt=""
                 width={100}
                 height={100}
@@ -93,3 +93,4 @@ export default function Gallery({ product }: { product: TProduct }) {
     </>
   );
 }
+
