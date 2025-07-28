@@ -18,8 +18,19 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          # Add the VPS host to known_hosts to prevent "man-in-the-middle" warnings
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: SSH into VPS and deploy
         run: |
-          ssh $
+          # Replace 'your_username' with the actual SSH username for your VPS
+          # Replace 'path/to/your/app' with the deployment path on your VPS
+          ssh root@${{ secrets.VPS_HOST }} "
+            # Add your deployment commands here. Examples:
+            # cd /path/to/your/app
+            # git pull origin update-vps
+            # sudo systemctl restart your_microservice
+            # Or use rsync to copy files:
+            # rsync -avz --delete ./ /path/to/your/app/
+            echo 'Deployment script goes here!'
+          "
