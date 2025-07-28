@@ -34,3 +34,14 @@ jobs:
             docker compose up -d --build
 
             echo "Deployment script finished."
+            docker cp adam-store.sql postgres-adam-store:/adam-store.sql
+
+            docker exec -it postgres-adam-store bash -c "
+              echo '🔄 Dropping and recreating public schema...';
+              psql -U postgres -d adam-store -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\"
+
+              echo '📥 Importing SQL file...';
+              psql -U postgres -d adam-store -f /adam-store.sql
+
+              echo '✅ Import completed.';
+            "
