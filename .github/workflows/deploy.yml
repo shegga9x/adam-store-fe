@@ -15,10 +15,22 @@ jobs:
       - name: Multiple commands
         uses: appleboy/ssh-action@v1
         with:
-          host: microservices.appf4.io.vn
+          host: ${{ secrets.VPS_HOST }}
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
-            whoami
-            ls -al
+            cd /root/f4-microserices-vps-configuration/Spring_AdamStore
+
+            if [ $? -ne 0 ]; then
+              echo "Error: Directory does not exist or cannot be accessed."
+              exit 1
+            fi
+
+            echo "Pulling latest changes..."
+            git pull
+
+            echo "Running docker-compose up..."
+            docker compose up -d --build
+
+            echo "Deployment script finished."
