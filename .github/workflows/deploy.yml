@@ -9,7 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      read-all
+      contents: read
+    environment: secrets
     steps:
       - name: Multiple commands
         uses: appleboy/ssh-action@v1
