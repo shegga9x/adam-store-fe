@@ -8,31 +8,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H microservices.appf4.io.vn >> ~/.ssh/known_hosts
-        # The shell line below is usually not explicitly needed if it's the default,
-        # but including it doesn't hurt if you want to be specific.
-        shell: /usr/bin/bash -e {0}
-
+        shell: bash
 
       - name: SSH into VPS and deploy
         run: |
-          # Replace 'your_username' with the actual SSH username for your VPS
-          # Replace 'path/to/your/app' with the deployment path on your VPS
-          ssh root@microservices.appf4.io.vn
-            # Add your deployment commands here. Examples:
-            # cd /path/to/your/app
-            # git pull origin update-vps
-            # sudo systemctl restart your_microservice
-            # Or use rsync to copy files:
-            # rsync -avz --delete ./ /path/to/your/app/
-            echo 'Deployment script goes here!'
-          "
+          ssh -o StrictHostKeyChecking=no root@microservices.appf4.io.vn << 'EOF'
+            echo '✅ Connected to VPS'
+
+            # 🔄 Pull latest changes
+            cd /root/your-app-folder
+            git pull origin update-vps
+
+            # ♻️ Restart service
+            docker compose down
+            docker compose up -d --build
+
+            echo '🚀 Deployment done!'
+          EOF
