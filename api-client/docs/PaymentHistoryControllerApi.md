@@ -75,18 +75,18 @@ const apiInstance = new PaymentHistoryControllerApi(configuration);
 
 let startDate: string; // (default to undefined)
 let endDate: string; // (default to undefined)
-let paymentStatus: 'PAID' | 'PENDING' | 'REFUNDED' | 'CANCELED' | 'FAILED'; // (default to undefined)
 let page: number; //Zero-based page index (0..N) (optional) (default to 0)
 let size: number; //The size of the page to be returned (optional) (default to 10)
 let sort: Array<string>; //Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. (optional) (default to undefined)
+let paymentStatus: 'PAID' | 'PENDING' | 'REFUNDED' | 'CANCELED' | 'FAILED'; // (optional) (default to undefined)
 
 const { status, data } = await apiInstance.searchPaymentHistories(
     startDate,
     endDate,
-    paymentStatus,
     page,
     size,
-    sort
+    sort,
+    paymentStatus
 );
 ```
 
@@ -96,10 +96,10 @@ const { status, data } = await apiInstance.searchPaymentHistories(
 |------------- | ------------- | ------------- | -------------|
 | **startDate** | [**string**] |  | defaults to undefined|
 | **endDate** | [**string**] |  | defaults to undefined|
-| **paymentStatus** | [**&#39;PAID&#39; | &#39;PENDING&#39; | &#39;REFUNDED&#39; | &#39;CANCELED&#39; | &#39;FAILED&#39;**]**Array<&#39;PAID&#39; &#124; &#39;PENDING&#39; &#124; &#39;REFUNDED&#39; &#124; &#39;CANCELED&#39; &#124; &#39;FAILED&#39;>** |  | defaults to undefined|
 | **page** | [**number**] | Zero-based page index (0..N) | (optional) defaults to 0|
 | **size** | [**number**] | The size of the page to be returned | (optional) defaults to 10|
 | **sort** | **Array&lt;string&gt;** | Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. | (optional) defaults to undefined|
+| **paymentStatus** | [**&#39;PAID&#39; | &#39;PENDING&#39; | &#39;REFUNDED&#39; | &#39;CANCELED&#39; | &#39;FAILED&#39;**]**Array<&#39;PAID&#39; &#124; &#39;PENDING&#39; &#124; &#39;REFUNDED&#39; &#124; &#39;CANCELED&#39; &#124; &#39;FAILED&#39;>** |  | (optional) defaults to undefined|
 
 
 ### Return type

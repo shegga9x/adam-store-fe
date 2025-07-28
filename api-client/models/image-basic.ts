@@ -17,14 +17,20 @@
 /**
  * 
  * @export
- * @interface CategoryRequest
+ * @interface ImageBasic
  */
-export interface CategoryRequest {
+export interface ImageBasic {
+    /**
+     * 
+     * @type {number}
+     * @memberof ImageBasic
+     */
+    'id'?: number;
     /**
      * 
      * @type {string}
-     * @memberof CategoryRequest
+     * @memberof ImageBasic
      */
-    'name': string;
+    'imageUrl'?: string;
 }
 

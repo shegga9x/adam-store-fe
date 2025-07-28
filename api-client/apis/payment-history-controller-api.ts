@@ -72,20 +72,18 @@ export const PaymentHistoryControllerApiAxiosParamCreator = function (configurat
          * Api này dùng để tìm kiếm Payment-History
          * @param {string} startDate 
          * @param {string} endDate 
-         * @param {SearchPaymentHistoriesPaymentStatusEnum} paymentStatus 
          * @param {number} [page] Zero-based page index (0..N)
          * @param {number} [size] The size of the page to be returned
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {SearchPaymentHistoriesPaymentStatusEnum} [paymentStatus] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchPaymentHistories: async (startDate: string, endDate: string, paymentStatus: SearchPaymentHistoriesPaymentStatusEnum, page?: number, size?: number, sort?: Array<string>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        searchPaymentHistories: async (startDate: string, endDate: string, page?: number, size?: number, sort?: Array<string>, paymentStatus?: SearchPaymentHistoriesPaymentStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'startDate' is not null or undefined
             assertParamExists('searchPaymentHistories', 'startDate', startDate)
             // verify required parameter 'endDate' is not null or undefined
             assertParamExists('searchPaymentHistories', 'endDate', endDate)
-            // verify required parameter 'paymentStatus' is not null or undefined
-            assertParamExists('searchPaymentHistories', 'paymentStatus', paymentStatus)
             const localVarPath = `/v1/admin/payment-histories/search`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -167,15 +165,15 @@ export const PaymentHistoryControllerApiFp = function(configuration?: Configurat
          * Api này dùng để tìm kiếm Payment-History
          * @param {string} startDate 
          * @param {string} endDate 
-         * @param {SearchPaymentHistoriesPaymentStatusEnum} paymentStatus 
          * @param {number} [page] Zero-based page index (0..N)
          * @param {number} [size] The size of the page to be returned
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {SearchPaymentHistoriesPaymentStatusEnum} [paymentStatus] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async searchPaymentHistories(startDate: string, endDate: string, paymentStatus: SearchPaymentHistoriesPaymentStatusEnum, page?: number, size?: number, sort?: Array<string>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponsePageResponsePaymentHistoryResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.searchPaymentHistories(startDate, endDate, paymentStatus, page, size, sort, options);
+        async searchPaymentHistories(startDate: string, endDate: string, page?: number, size?: number, sort?: Array<string>, paymentStatus?: SearchPaymentHistoriesPaymentStatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponsePageResponsePaymentHistoryResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchPaymentHistories(startDate, endDate, page, size, sort, paymentStatus, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['PaymentHistoryControllerApi.searchPaymentHistories']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -206,7 +204,7 @@ export const PaymentHistoryControllerApiFactory = function (configuration?: Conf
          * @throws {RequiredError}
          */
         searchPaymentHistories(requestParameters: PaymentHistoryControllerApiSearchPaymentHistoriesRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponsePageResponsePaymentHistoryResponse> {
-            return localVarFp.searchPaymentHistories(requestParameters.startDate, requestParameters.endDate, requestParameters.paymentStatus, requestParameters.page, requestParameters.size, requestParameters.sort, options).then((request) => request(axios, basePath));
+            return localVarFp.searchPaymentHistories(requestParameters.startDate, requestParameters.endDate, requestParameters.page, requestParameters.size, requestParameters.sort, requestParameters.paymentStatus, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -246,13 +244,6 @@ export interface PaymentHistoryControllerApiSearchPaymentHistoriesRequest {
     readonly endDate: string
 
     /**
-     * 
-     * @type {'PAID' | 'PENDING' | 'REFUNDED' | 'CANCELED' | 'FAILED'}
-     * @memberof PaymentHistoryControllerApiSearchPaymentHistories
-     */
-    readonly paymentStatus: SearchPaymentHistoriesPaymentStatusEnum
-
-    /**
      * Zero-based page index (0..N)
      * @type {number}
      * @memberof PaymentHistoryControllerApiSearchPaymentHistories
@@ -272,6 +263,13 @@ export interface PaymentHistoryControllerApiSearchPaymentHistoriesRequest {
      * @memberof PaymentHistoryControllerApiSearchPaymentHistories
      */
     readonly sort?: Array<string>
+
+    /**
+     * 
+     * @type {'PAID' | 'PENDING' | 'REFUNDED' | 'CANCELED' | 'FAILED'}
+     * @memberof PaymentHistoryControllerApiSearchPaymentHistories
+     */
+    readonly paymentStatus?: SearchPaymentHistoriesPaymentStatusEnum
 }
 
 /**
@@ -300,7 +298,7 @@ export class PaymentHistoryControllerApi extends BaseAPI {
      * @memberof PaymentHistoryControllerApi
      */
     public searchPaymentHistories(requestParameters: PaymentHistoryControllerApiSearchPaymentHistoriesRequest, options?: RawAxiosRequestConfig) {
-        return PaymentHistoryControllerApiFp(this.configuration).searchPaymentHistories(requestParameters.startDate, requestParameters.endDate, requestParameters.paymentStatus, requestParameters.page, requestParameters.size, requestParameters.sort, options).then((request) => request(this.axios, this.basePath));
+        return PaymentHistoryControllerApiFp(this.configuration).searchPaymentHistories(requestParameters.startDate, requestParameters.endDate, requestParameters.page, requestParameters.size, requestParameters.sort, requestParameters.paymentStatus, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

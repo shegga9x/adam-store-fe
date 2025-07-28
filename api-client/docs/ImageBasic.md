@@ -1,19 +1,21 @@
-# CategoryRequest
+# ImageBasic
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** |  | [default to undefined]
+**id** | **number** |  | [optional] [default to undefined]
+**imageUrl** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { CategoryRequest } from './api';
+import { ImageBasic } from './api';
 
-const instance: CategoryRequest = {
-    name,
+const instance: ImageBasic = {
+    id,
+    imageUrl,
 };
 ```
 

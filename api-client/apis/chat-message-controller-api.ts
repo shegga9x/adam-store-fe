@@ -23,12 +23,52 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
 import type { ApiResponseListChatMessageResponse } from '../models';
+// @ts-ignore
+import type { ApiResponseVoid } from '../models';
 /**
  * ChatMessageControllerApi - axios parameter creator
  * @export
  */
 export const ChatMessageControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @summary Delete message by id
+         * @param {string} messageId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteMessage: async (messageId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'messageId' is not null or undefined
+            assertParamExists('deleteMessage', 'messageId', messageId)
+            const localVarPath = `/v1/private/messages/{messageId}`
+                .replace(`{${"messageId"}}`, encodeURIComponent(String(messageId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * Lấy danh sách tin nhắn  trong một cuộc trò chuyện
          * @summary Fetch all messages for conversationId
@@ -70,6 +110,54 @@ export const ChatMessageControllerApiAxiosParamCreator = function (configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Search messages in a conversation by keyword
+         * @param {string} conversationId 
+         * @param {string} keyword 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        searchMessages: async (conversationId: string, keyword: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'conversationId' is not null or undefined
+            assertParamExists('searchMessages', 'conversationId', conversationId)
+            // verify required parameter 'keyword' is not null or undefined
+            assertParamExists('searchMessages', 'keyword', keyword)
+            const localVarPath = `/v1/private/messages/search`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (conversationId !== undefined) {
+                localVarQueryParameter['conversationId'] = conversationId;
+            }
+
+            if (keyword !== undefined) {
+                localVarQueryParameter['keyword'] = keyword;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -80,6 +168,19 @@ export const ChatMessageControllerApiAxiosParamCreator = function (configuration
 export const ChatMessageControllerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ChatMessageControllerApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @summary Delete message by id
+         * @param {string} messageId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteMessage(messageId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponseVoid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteMessage(messageId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChatMessageControllerApi.deleteMessage']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * Lấy danh sách tin nhắn  trong một cuộc trò chuyện
          * @summary Fetch all messages for conversationId
@@ -93,6 +194,20 @@ export const ChatMessageControllerApiFp = function(configuration?: Configuration
             const localVarOperationServerBasePath = operationServerMap['ChatMessageControllerApi.getMessages']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Search messages in a conversation by keyword
+         * @param {string} conversationId 
+         * @param {string} keyword 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async searchMessages(conversationId: string, keyword: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponseListChatMessageResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchMessages(conversationId, keyword, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChatMessageControllerApi.searchMessages']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -104,6 +219,16 @@ export const ChatMessageControllerApiFactory = function (configuration?: Configu
     const localVarFp = ChatMessageControllerApiFp(configuration)
     return {
         /**
+         * 
+         * @summary Delete message by id
+         * @param {ChatMessageControllerApiDeleteMessageRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteMessage(requestParameters: ChatMessageControllerApiDeleteMessageRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponseVoid> {
+            return localVarFp.deleteMessage(requestParameters.messageId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Lấy danh sách tin nhắn  trong một cuộc trò chuyện
          * @summary Fetch all messages for conversationId
          * @param {ChatMessageControllerApiGetMessagesRequest} requestParameters Request parameters.
@@ -113,8 +238,32 @@ export const ChatMessageControllerApiFactory = function (configuration?: Configu
         getMessages(requestParameters: ChatMessageControllerApiGetMessagesRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponseListChatMessageResponse> {
             return localVarFp.getMessages(requestParameters.conversationId, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary Search messages in a conversation by keyword
+         * @param {ChatMessageControllerApiSearchMessagesRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        searchMessages(requestParameters: ChatMessageControllerApiSearchMessagesRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponseListChatMessageResponse> {
+            return localVarFp.searchMessages(requestParameters.conversationId, requestParameters.keyword, options).then((request) => request(axios, basePath));
+        },
     };
 };
+
+/**
+ * Request parameters for deleteMessage operation in ChatMessageControllerApi.
+ * @export
+ * @interface ChatMessageControllerApiDeleteMessageRequest
+ */
+export interface ChatMessageControllerApiDeleteMessageRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageControllerApiDeleteMessage
+     */
+    readonly messageId: string
+}
 
 /**
  * Request parameters for getMessages operation in ChatMessageControllerApi.
@@ -131,12 +280,45 @@ export interface ChatMessageControllerApiGetMessagesRequest {
 }
 
 /**
+ * Request parameters for searchMessages operation in ChatMessageControllerApi.
+ * @export
+ * @interface ChatMessageControllerApiSearchMessagesRequest
+ */
+export interface ChatMessageControllerApiSearchMessagesRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageControllerApiSearchMessages
+     */
+    readonly conversationId: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageControllerApiSearchMessages
+     */
+    readonly keyword: string
+}
+
+/**
  * ChatMessageControllerApi - object-oriented interface
  * @export
  * @class ChatMessageControllerApi
  * @extends {BaseAPI}
  */
 export class ChatMessageControllerApi extends BaseAPI {
+    /**
+     * 
+     * @summary Delete message by id
+     * @param {ChatMessageControllerApiDeleteMessageRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChatMessageControllerApi
+     */
+    public deleteMessage(requestParameters: ChatMessageControllerApiDeleteMessageRequest, options?: RawAxiosRequestConfig) {
+        return ChatMessageControllerApiFp(this.configuration).deleteMessage(requestParameters.messageId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Lấy danh sách tin nhắn  trong một cuộc trò chuyện
      * @summary Fetch all messages for conversationId
@@ -147,6 +329,18 @@ export class ChatMessageControllerApi extends BaseAPI {
      */
     public getMessages(requestParameters: ChatMessageControllerApiGetMessagesRequest, options?: RawAxiosRequestConfig) {
         return ChatMessageControllerApiFp(this.configuration).getMessages(requestParameters.conversationId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Search messages in a conversation by keyword
+     * @param {ChatMessageControllerApiSearchMessagesRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChatMessageControllerApi
+     */
+    public searchMessages(requestParameters: ChatMessageControllerApiSearchMessagesRequest, options?: RawAxiosRequestConfig) {
+        return ChatMessageControllerApiFp(this.configuration).searchMessages(requestParameters.conversationId, requestParameters.keyword, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -202,16 +202,57 @@ export const OrderControllerApiAxiosParamCreator = function (configuration?: Con
             };
         },
         /**
-         * Api này dùng để lấy tất cả đơn hàng
-         * @summary Fetch Order For Admin
+         * Api này dùng để lấy chi tiết đơn hàng
+         * @summary Fetch Order Detail By Id
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        fetchDetailById1: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('fetchDetailById1', 'id', id)
+            const localVarPath = `/v1/private/orders/{id}/details`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Lấy danh sách đơn hàng của người dùng hiện tại, lọc theo trạng thái
+         * @summary Get Orders for Current User
+         * @param {GetOrdersForUserOrderStatusEnum} orderStatus 
          * @param {number} [page] Zero-based page index (0..N)
          * @param {number} [size] The size of the page to be returned
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        fetchAll11: async (page?: number, size?: number, sort?: Array<string>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/v1/admin/orders`;
+        getOrdersForUser: async (orderStatus: GetOrdersForUserOrderStatusEnum, page?: number, size?: number, sort?: Array<string>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'orderStatus' is not null or undefined
+            assertParamExists('getOrdersForUser', 'orderStatus', orderStatus)
+            const localVarPath = `/v1/private/user/orders`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -239,43 +280,9 @@ export const OrderControllerApiAxiosParamCreator = function (configuration?: Con
                 localVarQueryParameter['sort'] = sort;
             }
 
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Api này dùng để lấy chi tiết đơn hàng
-         * @summary Fetch Order Detail By Id
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        fetchDetailById1: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('fetchDetailById1', 'id', id)
-            const localVarPath = `/v1/private/orders/{id}/details`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
+            if (orderStatus !== undefined) {
+                localVarQueryParameter['orderStatus'] = orderStatus;
             }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -405,17 +412,23 @@ export const OrderControllerApiAxiosParamCreator = function (configuration?: Con
             };
         },
         /**
-         * Search Order cho User hiện tại hoặc Admin dựa vào token
-         * @summary Search Order For Current User Or Admin
+         * API cho admin lấy danh sách đơn hàng theo khoảng thời gian và trạng thái (tuỳ chọn)
+         * @summary Search Orders for Admin
+         * @param {string} startDate 
+         * @param {string} endDate 
          * @param {number} [page] Zero-based page index (0..N)
          * @param {number} [size] The size of the page to be returned
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
-         * @param {Array<string>} [search] 
+         * @param {SearchOrdersForAdminOrderStatusEnum} [orderStatus] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchOrder: async (page?: number, size?: number, sort?: Array<string>, search?: Array<string>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/v1/private/orders/search`;
+        searchOrdersForAdmin: async (startDate: string, endDate: string, page?: number, size?: number, sort?: Array<string>, orderStatus?: SearchOrdersForAdminOrderStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'startDate' is not null or undefined
+            assertParamExists('searchOrdersForAdmin', 'startDate', startDate)
+            // verify required parameter 'endDate' is not null or undefined
+            assertParamExists('searchOrdersForAdmin', 'endDate', endDate)
+            const localVarPath = `/v1/admin/orders/search`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -443,8 +456,20 @@ export const OrderControllerApiAxiosParamCreator = function (configuration?: Con
                 localVarQueryParameter['sort'] = sort;
             }
 
-            if (search) {
-                localVarQueryParameter['search'] = search;
+            if (startDate !== undefined) {
+                localVarQueryParameter['startDate'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString().substring(0,10) :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['endDate'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString().substring(0,10) :
+                    endDate;
+            }
+
+            if (orderStatus !== undefined) {
+                localVarQueryParameter['orderStatus'] = orderStatus;
             }
 
 
@@ -565,21 +590,6 @@ export const OrderControllerApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Api này dùng để lấy tất cả đơn hàng
-         * @summary Fetch Order For Admin
-         * @param {number} [page] Zero-based page index (0..N)
-         * @param {number} [size] The size of the page to be returned
-         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async fetchAll11(page?: number, size?: number, sort?: Array<string>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponsePageResponseOrderResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.fetchAll11(page, size, sort, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['OrderControllerApi.fetchAll11']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
          * Api này dùng để lấy chi tiết đơn hàng
          * @summary Fetch Order Detail By Id
          * @param {number} id 
@@ -590,6 +600,22 @@ export const OrderControllerApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.fetchDetailById1(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrderControllerApi.fetchDetailById1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Lấy danh sách đơn hàng của người dùng hiện tại, lọc theo trạng thái
+         * @summary Get Orders for Current User
+         * @param {GetOrdersForUserOrderStatusEnum} orderStatus 
+         * @param {number} [page] Zero-based page index (0..N)
+         * @param {number} [size] The size of the page to be returned
+         * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOrdersForUser(orderStatus: GetOrdersForUserOrderStatusEnum, page?: number, size?: number, sort?: Array<string>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponsePageResponseOrderResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrdersForUser(orderStatus, page, size, sort, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OrderControllerApi.getOrdersForUser']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -632,19 +658,21 @@ export const OrderControllerApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Search Order cho User hiện tại hoặc Admin dựa vào token
-         * @summary Search Order For Current User Or Admin
+         * API cho admin lấy danh sách đơn hàng theo khoảng thời gian và trạng thái (tuỳ chọn)
+         * @summary Search Orders for Admin
+         * @param {string} startDate 
+         * @param {string} endDate 
          * @param {number} [page] Zero-based page index (0..N)
          * @param {number} [size] The size of the page to be returned
          * @param {Array<string>} [sort] Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
-         * @param {Array<string>} [search] 
+         * @param {SearchOrdersForAdminOrderStatusEnum} [orderStatus] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async searchOrder(page?: number, size?: number, sort?: Array<string>, search?: Array<string>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponsePageResponseOrderResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.searchOrder(page, size, sort, search, options);
+        async searchOrdersForAdmin(startDate: string, endDate: string, page?: number, size?: number, sort?: Array<string>, orderStatus?: SearchOrdersForAdminOrderStatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponsePageResponseOrderResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchOrdersForAdmin(startDate, endDate, page, size, sort, orderStatus, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['OrderControllerApi.searchOrder']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['OrderControllerApi.searchOrdersForAdmin']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -712,16 +740,6 @@ export const OrderControllerApiFactory = function (configuration?: Configuration
             return localVarFp.delete7(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Api này dùng để lấy tất cả đơn hàng
-         * @summary Fetch Order For Admin
-         * @param {OrderControllerApiFetchAll11Request} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        fetchAll11(requestParameters: OrderControllerApiFetchAll11Request = {}, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponsePageResponseOrderResponse> {
-            return localVarFp.fetchAll11(requestParameters.page, requestParameters.size, requestParameters.sort, options).then((request) => request(axios, basePath));
-        },
-        /**
          * Api này dùng để lấy chi tiết đơn hàng
          * @summary Fetch Order Detail By Id
          * @param {OrderControllerApiFetchDetailById1Request} requestParameters Request parameters.
@@ -730,6 +748,16 @@ export const OrderControllerApiFactory = function (configuration?: Configuration
          */
         fetchDetailById1(requestParameters: OrderControllerApiFetchDetailById1Request, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponseOrderResponse> {
             return localVarFp.fetchDetailById1(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Lấy danh sách đơn hàng của người dùng hiện tại, lọc theo trạng thái
+         * @summary Get Orders for Current User
+         * @param {OrderControllerApiGetOrdersForUserRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOrdersForUser(requestParameters: OrderControllerApiGetOrdersForUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponsePageResponseOrderResponse> {
+            return localVarFp.getOrdersForUser(requestParameters.orderStatus, requestParameters.page, requestParameters.size, requestParameters.sort, options).then((request) => request(axios, basePath));
         },
         /**
          * Api này dùng để thanh toán đơn hàng thông qua VNPAY
@@ -762,14 +790,14 @@ export const OrderControllerApiFactory = function (configuration?: Configuration
             return localVarFp.retryPayment(requestParameters.orderId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Search Order cho User hiện tại hoặc Admin dựa vào token
-         * @summary Search Order For Current User Or Admin
-         * @param {OrderControllerApiSearchOrderRequest} requestParameters Request parameters.
+         * API cho admin lấy danh sách đơn hàng theo khoảng thời gian và trạng thái (tuỳ chọn)
+         * @summary Search Orders for Admin
+         * @param {OrderControllerApiSearchOrdersForAdminRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchOrder(requestParameters: OrderControllerApiSearchOrderRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponsePageResponseOrderResponse> {
-            return localVarFp.searchOrder(requestParameters.page, requestParameters.size, requestParameters.sort, requestParameters.search, options).then((request) => request(axios, basePath));
+        searchOrdersForAdmin(requestParameters: OrderControllerApiSearchOrdersForAdminRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiResponsePageResponseOrderResponse> {
+            return localVarFp.searchOrdersForAdmin(requestParameters.startDate, requestParameters.endDate, requestParameters.page, requestParameters.size, requestParameters.sort, requestParameters.orderStatus, options).then((request) => request(axios, basePath));
         },
         /**
          * Cập nhập đia chỉ cho đơn hàng ở trạng thái PENDING hoặc PROCESSING
@@ -841,34 +869,6 @@ export interface OrderControllerApiDelete7Request {
 }
 
 /**
- * Request parameters for fetchAll11 operation in OrderControllerApi.
- * @export
- * @interface OrderControllerApiFetchAll11Request
- */
-export interface OrderControllerApiFetchAll11Request {
-    /**
-     * Zero-based page index (0..N)
-     * @type {number}
-     * @memberof OrderControllerApiFetchAll11
-     */
-    readonly page?: number
-
-    /**
-     * The size of the page to be returned
-     * @type {number}
-     * @memberof OrderControllerApiFetchAll11
-     */
-    readonly size?: number
-
-    /**
-     * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
-     * @type {Array<string>}
-     * @memberof OrderControllerApiFetchAll11
-     */
-    readonly sort?: Array<string>
-}
-
-/**
  * Request parameters for fetchDetailById1 operation in OrderControllerApi.
  * @export
  * @interface OrderControllerApiFetchDetailById1Request
@@ -880,6 +880,41 @@ export interface OrderControllerApiFetchDetailById1Request {
      * @memberof OrderControllerApiFetchDetailById1
      */
     readonly id: number
+}
+
+/**
+ * Request parameters for getOrdersForUser operation in OrderControllerApi.
+ * @export
+ * @interface OrderControllerApiGetOrdersForUserRequest
+ */
+export interface OrderControllerApiGetOrdersForUserRequest {
+    /**
+     * 
+     * @type {'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'}
+     * @memberof OrderControllerApiGetOrdersForUser
+     */
+    readonly orderStatus: GetOrdersForUserOrderStatusEnum
+
+    /**
+     * Zero-based page index (0..N)
+     * @type {number}
+     * @memberof OrderControllerApiGetOrdersForUser
+     */
+    readonly page?: number
+
+    /**
+     * The size of the page to be returned
+     * @type {number}
+     * @memberof OrderControllerApiGetOrdersForUser
+     */
+    readonly size?: number
+
+    /**
+     * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+     * @type {Array<string>}
+     * @memberof OrderControllerApiGetOrdersForUser
+     */
+    readonly sort?: Array<string>
 }
 
 /**
@@ -925,38 +960,52 @@ export interface OrderControllerApiRetryPaymentRequest {
 }
 
 /**
- * Request parameters for searchOrder operation in OrderControllerApi.
+ * Request parameters for searchOrdersForAdmin operation in OrderControllerApi.
  * @export
- * @interface OrderControllerApiSearchOrderRequest
+ * @interface OrderControllerApiSearchOrdersForAdminRequest
  */
-export interface OrderControllerApiSearchOrderRequest {
+export interface OrderControllerApiSearchOrdersForAdminRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderControllerApiSearchOrdersForAdmin
+     */
+    readonly startDate: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof OrderControllerApiSearchOrdersForAdmin
+     */
+    readonly endDate: string
+
     /**
      * Zero-based page index (0..N)
      * @type {number}
-     * @memberof OrderControllerApiSearchOrder
+     * @memberof OrderControllerApiSearchOrdersForAdmin
      */
     readonly page?: number
 
     /**
      * The size of the page to be returned
      * @type {number}
-     * @memberof OrderControllerApiSearchOrder
+     * @memberof OrderControllerApiSearchOrdersForAdmin
      */
     readonly size?: number
 
     /**
      * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
      * @type {Array<string>}
-     * @memberof OrderControllerApiSearchOrder
+     * @memberof OrderControllerApiSearchOrdersForAdmin
      */
     readonly sort?: Array<string>
 
     /**
      * 
-     * @type {Array<string>}
-     * @memberof OrderControllerApiSearchOrder
+     * @type {'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'}
+     * @memberof OrderControllerApiSearchOrdersForAdmin
      */
-    readonly search?: Array<string>
+    readonly orderStatus?: SearchOrdersForAdminOrderStatusEnum
 }
 
 /**
@@ -1036,18 +1085,6 @@ export class OrderControllerApi extends BaseAPI {
     }
 
     /**
-     * Api này dùng để lấy tất cả đơn hàng
-     * @summary Fetch Order For Admin
-     * @param {OrderControllerApiFetchAll11Request} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof OrderControllerApi
-     */
-    public fetchAll11(requestParameters: OrderControllerApiFetchAll11Request = {}, options?: RawAxiosRequestConfig) {
-        return OrderControllerApiFp(this.configuration).fetchAll11(requestParameters.page, requestParameters.size, requestParameters.sort, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * Api này dùng để lấy chi tiết đơn hàng
      * @summary Fetch Order Detail By Id
      * @param {OrderControllerApiFetchDetailById1Request} requestParameters Request parameters.
@@ -1057,6 +1094,18 @@ export class OrderControllerApi extends BaseAPI {
      */
     public fetchDetailById1(requestParameters: OrderControllerApiFetchDetailById1Request, options?: RawAxiosRequestConfig) {
         return OrderControllerApiFp(this.configuration).fetchDetailById1(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Lấy danh sách đơn hàng của người dùng hiện tại, lọc theo trạng thái
+     * @summary Get Orders for Current User
+     * @param {OrderControllerApiGetOrdersForUserRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OrderControllerApi
+     */
+    public getOrdersForUser(requestParameters: OrderControllerApiGetOrdersForUserRequest, options?: RawAxiosRequestConfig) {
+        return OrderControllerApiFp(this.configuration).getOrdersForUser(requestParameters.orderStatus, requestParameters.page, requestParameters.size, requestParameters.sort, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1096,15 +1145,15 @@ export class OrderControllerApi extends BaseAPI {
     }
 
     /**
-     * Search Order cho User hiện tại hoặc Admin dựa vào token
-     * @summary Search Order For Current User Or Admin
-     * @param {OrderControllerApiSearchOrderRequest} requestParameters Request parameters.
+     * API cho admin lấy danh sách đơn hàng theo khoảng thời gian và trạng thái (tuỳ chọn)
+     * @summary Search Orders for Admin
+     * @param {OrderControllerApiSearchOrdersForAdminRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof OrderControllerApi
      */
-    public searchOrder(requestParameters: OrderControllerApiSearchOrderRequest = {}, options?: RawAxiosRequestConfig) {
-        return OrderControllerApiFp(this.configuration).searchOrder(requestParameters.page, requestParameters.size, requestParameters.sort, requestParameters.search, options).then((request) => request(this.axios, this.basePath));
+    public searchOrdersForAdmin(requestParameters: OrderControllerApiSearchOrdersForAdminRequest, options?: RawAxiosRequestConfig) {
+        return OrderControllerApiFp(this.configuration).searchOrdersForAdmin(requestParameters.startDate, requestParameters.endDate, requestParameters.page, requestParameters.size, requestParameters.sort, requestParameters.orderStatus, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1120,3 +1169,25 @@ export class OrderControllerApi extends BaseAPI {
     }
 }
 
+/**
+ * @export
+ */
+export const GetOrdersForUserOrderStatusEnum = {
+    Pending: 'PENDING',
+    Processing: 'PROCESSING',
+    Shipped: 'SHIPPED',
+    Delivered: 'DELIVERED',
+    Cancelled: 'CANCELLED'
+} as const;
+export type GetOrdersForUserOrderStatusEnum = typeof GetOrdersForUserOrderStatusEnum[keyof typeof GetOrdersForUserOrderStatusEnum];
+/**
+ * @export
+ */
+export const SearchOrdersForAdminOrderStatusEnum = {
+    Pending: 'PENDING',
+    Processing: 'PROCESSING',
+    Shipped: 'SHIPPED',
+    Delivered: 'DELIVERED',
+    Cancelled: 'CANCELLED'
+} as const;
+export type SearchOrdersForAdminOrderStatusEnum = typeof SearchOrdersForAdminOrderStatusEnum[keyof typeof SearchOrdersForAdminOrderStatusEnum];

@@ -52,12 +52,6 @@ export interface ProductVariantResponse {
      * @type {string}
      * @memberof ProductVariantResponse
      */
-    'imageUrl'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ProductVariantResponse
-     */
     'status'?: ProductVariantResponseStatusEnum;
     /**
      * 

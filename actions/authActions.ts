@@ -62,6 +62,8 @@ export async function signUpAction(formData: FormData): Promise<ActionResponse<U
     return { success: true, message: "Sign up and login successful!", data: user }; // Return the full UserResponse
 
   } catch (error) {
+    console.log("Error during sign-up action:", error);
+    
     const extractedError = extractErrorMessage(error, "An unexpected error occurred during sign-up.");
     console.error("Error in signUpAction:", extractedError);
 

@@ -8,12 +8,12 @@ All URIs are relative to *https://microservices.appf4.io.vn/adamstore*
 |[**cancelOrder**](#cancelorder) | **PUT** /v1/private/orders/{orderId}/cancel | Cancel Order|
 |[**create1**](#create1) | **POST** /v1/private/orders | Create Order|
 |[**delete7**](#delete7) | **DELETE** /v1/admin/orders/{id} | Delete Order For Admin|
-|[**fetchAll11**](#fetchall11) | **GET** /v1/admin/orders | Fetch Order For Admin|
 |[**fetchDetailById1**](#fetchdetailbyid1) | **GET** /v1/private/orders/{id}/details | Fetch Order Detail By Id|
+|[**getOrdersForUser**](#getordersforuser) | **GET** /v1/private/user/orders | Get Orders for Current User|
 |[**pay**](#pay) | **GET** /v1/private/orders/{orderId}/vn-pay | Payment for Order|
 |[**payCallbackHandler**](#paycallbackhandler) | **POST** /v1/private/orders/vn-pay-callback | Payment CallBack for Order|
 |[**retryPayment**](#retrypayment) | **GET** /v1/private/orders/{orderId}/retry-payment | Retry Payment for Order|
-|[**searchOrder**](#searchorder) | **GET** /v1/private/orders/search | Search Order For Current User Or Admin|
+|[**searchOrdersForAdmin**](#searchordersforadmin) | **GET** /v1/admin/orders/search | Search Orders for Admin|
 |[**updateAddress**](#updateaddress) | **PUT** /v1/private/orders/{orderId}/address | Update Address for Order|
 
 # **calculateShippingFee**
@@ -222,63 +222,6 @@ const { status, data } = await apiInstance.delete7(
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **fetchAll11**
-> ApiResponsePageResponseOrderResponse fetchAll11()
-
-Api này dùng để lấy tất cả đơn hàng
-
-### Example
-
-```typescript
-import {
-    OrderControllerApi,
-    Configuration
-} from './api';
-
-const configuration = new Configuration();
-const apiInstance = new OrderControllerApi(configuration);
-
-let page: number; //Zero-based page index (0..N) (optional) (default to 0)
-let size: number; //The size of the page to be returned (optional) (default to 10)
-let sort: Array<string>; //Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. (optional) (default to undefined)
-
-const { status, data } = await apiInstance.fetchAll11(
-    page,
-    size,
-    sort
-);
-```
-
-### Parameters
-
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **page** | [**number**] | Zero-based page index (0..N) | (optional) defaults to 0|
-| **size** | [**number**] | The size of the page to be returned | (optional) defaults to 10|
-| **sort** | **Array&lt;string&gt;** | Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. | (optional) defaults to undefined|
-
-
-### Return type
-
-**ApiResponsePageResponseOrderResponse**
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: */*
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** | OK |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **fetchDetailById1**
 > ApiResponseOrderResponse fetchDetailById1()
 
@@ -312,6 +255,66 @@ const { status, data } = await apiInstance.fetchDetailById1(
 ### Return type
 
 **ApiResponseOrderResponse**
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getOrdersForUser**
+> ApiResponsePageResponseOrderResponse getOrdersForUser()
+
+Lấy danh sách đơn hàng của người dùng hiện tại, lọc theo trạng thái
+
+### Example
+
+```typescript
+import {
+    OrderControllerApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new OrderControllerApi(configuration);
+
+let orderStatus: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'; // (default to undefined)
+let page: number; //Zero-based page index (0..N) (optional) (default to 0)
+let size: number; //The size of the page to be returned (optional) (default to 10)
+let sort: Array<string>; //Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. (optional) (default to undefined)
+
+const { status, data } = await apiInstance.getOrdersForUser(
+    orderStatus,
+    page,
+    size,
+    sort
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **orderStatus** | [**&#39;PENDING&#39; | &#39;PROCESSING&#39; | &#39;SHIPPED&#39; | &#39;DELIVERED&#39; | &#39;CANCELLED&#39;**]**Array<&#39;PENDING&#39; &#124; &#39;PROCESSING&#39; &#124; &#39;SHIPPED&#39; &#124; &#39;DELIVERED&#39; &#124; &#39;CANCELLED&#39;>** |  | defaults to undefined|
+| **page** | [**number**] | Zero-based page index (0..N) | (optional) defaults to 0|
+| **size** | [**number**] | The size of the page to be returned | (optional) defaults to 10|
+| **sort** | **Array&lt;string&gt;** | Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. | (optional) defaults to undefined|
+
+
+### Return type
+
+**ApiResponsePageResponseOrderResponse**
 
 ### Authorization
 
@@ -484,10 +487,10 @@ const { status, data } = await apiInstance.retryPayment(
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **searchOrder**
-> ApiResponsePageResponseOrderResponse searchOrder()
+# **searchOrdersForAdmin**
+> ApiResponsePageResponseOrderResponse searchOrdersForAdmin()
 
-Search Order cho User hiện tại hoặc Admin dựa vào token
+API cho admin lấy danh sách đơn hàng theo khoảng thời gian và trạng thái (tuỳ chọn)
 
 ### Example
 
@@ -500,16 +503,20 @@ import {
 const configuration = new Configuration();
 const apiInstance = new OrderControllerApi(configuration);
 
+let startDate: string; // (default to undefined)
+let endDate: string; // (default to undefined)
 let page: number; //Zero-based page index (0..N) (optional) (default to 0)
 let size: number; //The size of the page to be returned (optional) (default to 10)
 let sort: Array<string>; //Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. (optional) (default to undefined)
-let search: Array<string>; // (optional) (default to undefined)
+let orderStatus: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'; // (optional) (default to undefined)
 
-const { status, data } = await apiInstance.searchOrder(
+const { status, data } = await apiInstance.searchOrdersForAdmin(
+    startDate,
+    endDate,
     page,
     size,
     sort,
-    search
+    orderStatus
 );
 ```
 
@@ -517,10 +524,12 @@ const { status, data } = await apiInstance.searchOrder(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **startDate** | [**string**] |  | defaults to undefined|
+| **endDate** | [**string**] |  | defaults to undefined|
 | **page** | [**number**] | Zero-based page index (0..N) | (optional) defaults to 0|
 | **size** | [**number**] | The size of the page to be returned | (optional) defaults to 10|
 | **sort** | **Array&lt;string&gt;** | Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. | (optional) defaults to undefined|
-| **search** | **Array&lt;string&gt;** |  | (optional) defaults to undefined|
+| **orderStatus** | [**&#39;PENDING&#39; | &#39;PROCESSING&#39; | &#39;SHIPPED&#39; | &#39;DELIVERED&#39; | &#39;CANCELLED&#39;**]**Array<&#39;PENDING&#39; &#124; &#39;PROCESSING&#39; &#124; &#39;SHIPPED&#39; &#124; &#39;DELIVERED&#39; &#124; &#39;CANCELLED&#39;>** |  | (optional) defaults to undefined|
 
 
 ### Return type
