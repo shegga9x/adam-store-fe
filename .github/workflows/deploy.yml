@@ -27,7 +27,7 @@ jobs:
         run: |
           # Replace 'your_username' with the actual SSH username for your VPS
           # Replace 'path/to/your/app' with the deployment path on your VPS
-          ssh root@${{ secrets.VPS_HOST }} "
+          ssh root@${{ secrets.VPS_HOST }}
             # Add your deployment commands here. Examples:
             # cd /path/to/your/app
             # git pull origin update-vps
