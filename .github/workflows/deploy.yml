@@ -13,7 +13,7 @@ jobs:
       - name: Multiple commands
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: microservices.appf4.io.vn
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
