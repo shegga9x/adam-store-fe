@@ -1,10 +1,3 @@
-name: Deploy Microservice to VPS
-
-on:
-  push:
-    branches:
-      - update-vps  # Or your deploy branch
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,23 +8,22 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/vps_key
+          chmod 600 ~/.ssh/vps_key
           ssh-keyscan -H microservices.appf4.io.vn >> ~/.ssh/known_hosts
         shell: bash
 
       - name: SSH into VPS and deploy
         run: |
-          ssh -o StrictHostKeyChecking=no root@microservices.appf4.io.vn << 'EOF'
+          ssh -i ~/.ssh/vps_key -o StrictHostKeyChecking=no root@microservices.appf4.io.vn << 'EOF'
             echo '✅ Connected to VPS'
 
-            # 🔄 Pull latest changes
+            # Go to project and deploy
             cd /root/your-app-folder
             git pull origin update-vps
 
-            # ♻️ Restart service
             docker compose down
             docker compose up -d --build
 
-            echo '🚀 Deployment done!'
+            echo '🚀 Deployment complete!'
           EOF
