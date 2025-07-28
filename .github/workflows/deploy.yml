@@ -21,27 +21,28 @@ jobs:
           port: 22
           script: |
             cd /root/f4-microserices-vps-configuration/Spring_AdamStore
-
+          
             if [ $? -ne 0 ]; then
               echo "Error: Directory does not exist or cannot be accessed."
               exit 1
             fi
-
+          
             echo "Pulling latest changes..."
             git pull
-
+          
             echo "Running docker-compose up..."
             docker compose up -d --build
-
+          
             echo "Deployment script finished."
+          
             docker cp adam-store.sql postgres-adam-store:/adam-store.sql
-
-            docker exec -it postgres-adam-store bash -c "
+          
+            docker exec postgres-adam-store bash -c "
               echo '🔄 Dropping and recreating public schema...';
               psql -U postgres -d adam-store -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\"
-
+          
               echo '📥 Importing SQL file...';
               psql -U postgres -d adam-store -f /adam-store.sql
-
+          
               echo '✅ Import completed.';
             "
