@@ -48,6 +48,7 @@ jobs:
               echo "⏳ Waiting for spring-adam-store to be healthy..."
               sleep 2
             done
+            sleep 5
             echo "✅ Service is UP"
             
             echo "📂 Copying SQL file into container..."
