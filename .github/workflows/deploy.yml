@@ -1,9 +1,9 @@
-name: Deploy Microservice to VPS
+name: 🚀 Deploy Microservice to VPS
 
 on:
   push:
     branches:
-      - update-vps # Or your deploy branch
+      - update-vps # or your specific deploy branch
 
 jobs:
   deploy:
@@ -12,7 +12,7 @@ jobs:
       contents: read
     environment: secrets
     steps:
-      - name: Multiple commands
+      - name: 📦 SSH Deploy to VPS
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -20,44 +20,43 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
-            cd /root/f4-microserices-vps-configuration/Spring_AdamStore
+            set -euo pipefail
 
-            if [ $? -ne 0 ]; then
-              echo "❌ Error: Directory does not exist or cannot be accessed."
-              exit 1
-            fi
+            PROJECT_DIR="/root/f4-microserices-vps-configuration/Spring_AdamStore"
+            DB_NAME="adam-store"
+            CONTAINER_DB="postgres-adam-store"
+            CONTAINER_APP="spring-adam-store"
+            HEALTH_URL="https://${{ secrets.VPS_HOST }}/adamstore/actuator/health"
+            SQL_FILE="adam-store-db.sql"
+
+            echo "📁 Navigating to project directory..."
+            cd $PROJECT_DIR
 
             echo "📥 Pulling latest changes from Git..."
             git pull
 
-            echo "⏳ Ensuring postgres container is running (if already exists)..."
-            docker compose up -d postgres-adam-store
+            echo "🛢️ Starting Postgres container if not running..."
+            docker compose up -d $CONTAINER_DB
 
-            echo "🧹 Dropping and recreating schema in postgres-adam-store..."
-            docker exec postgres-adam-store bash -c "
-              echo '🔄 Dropping and recreating public schema...';
-              psql -U postgres -d adam-store -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\"
-            "
-            docker compose down spring-adam-store
-            echo "🐳 Running full docker-compose (with build)..."
+            echo "🧹 Dropping and recreating schema in Postgres..."
+            docker exec $CONTAINER_DB bash -c "psql -U postgres -d $DB_NAME -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'"
+
+            echo "🧼 Removing existing app container if any..."
+            docker compose down $CONTAINER_APP
+
+            echo "🐳 Building and starting all services..."
             docker compose up -d --build
-            
-            echo "🔎 Waiting for spring-adam-store to become healthy..."
-            
-            until curl -s https://microservices.appf4.io.vn/adamstore/actuator/health | jq -r .status | grep -q UP; do
-              echo "⏳ Waiting for spring-adam-store to be healthy..."
-              sleep 2
+
+            echo "🔎 Waiting for $CONTAINER_APP to become healthy..."
+            until curl -sf $HEALTH_URL | jq -r .status | grep -q UP; do
+              echo "⏳ Waiting for $CONTAINER_APP to be healthy..."
+              sleep 3
             done
-            sleep 5
-            echo "✅ Service is UP"
-            
-            echo "📂 Copying SQL file into container..."
-            docker cp adam-store-db.sql postgres-adam-store:/adam-store-db.sql
 
-            echo "📥 Importing SQL into database..."
-            docker exec postgres-adam-store bash -c "
-              psql -U postgres -d adam-store -f /adam-store-db.sql
-              echo '✅ Import completed.';
-            "
+            echo "📂 Copying SQL file to Postgres container..."
+            docker cp $SQL_FILE $CONTAINER_DB:/$SQL_FILE
 
-            echo "✅ Deployment finished."
+            echo "📥 Importing SQL data into database..."
+            docker exec $CONTAINER_DB bash -c "psql -U postgres -d $DB_NAME -f /$SQL_FILE"
+
+            echo "✅ Deployment finished successfully."
