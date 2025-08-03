@@ -41,7 +41,14 @@ jobs:
 
             echo "🐳 Running full docker-compose (with build)..."
             docker compose up -d --build
-
+            
+            echo "🔎 Waiting for spring-adam-store to become healthy..."
+            until [ "$(docker inspect -f '{{.State.Health.Status}}' spring-adam-store)" = "healthy" ]; do
+              echo "⏳ Waiting for spring-adam-store to be healthy..."
+              sleep 2
+            done
+            echo "✅ spring-adam-store is healthy and ready."
+            
             echo "📂 Copying SQL file into container..."
             docker cp adam-store.sql postgres-adam-store:/adam-store.sql
 
