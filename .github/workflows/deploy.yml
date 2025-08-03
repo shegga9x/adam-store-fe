@@ -48,15 +48,14 @@ jobs:
               echo "⏳ Waiting for spring-adam-store to be healthy..."
               sleep 2
             done
-            sleep 5
             echo "✅ Service is UP"
             
             echo "📂 Copying SQL file into container..."
-            docker cp adam-store.sql postgres-adam-store:/adam-store.sql
+            docker cp adam-store-db.sql postgres-adam-store:/adam-store-db.sql
 
             echo "📥 Importing SQL into database..."
             docker exec postgres-adam-store bash -c "
-              psql -U postgres -d adam-store -f /adam-store.sql
+              psql -U postgres -d adam-store -f /adam-store-db.sql
               echo '✅ Import completed.';
             "
 
