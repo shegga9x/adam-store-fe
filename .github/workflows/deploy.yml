@@ -38,7 +38,7 @@ jobs:
               echo '🔄 Dropping and recreating public schema...';
               psql -U postgres -d adam-store -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\"
             "
-
+            docker compose down spring-adam-store
             echo "🐳 Running full docker-compose (with build)..."
             docker compose up -d --build
             
