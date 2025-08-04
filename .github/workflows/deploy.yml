@@ -27,7 +27,7 @@ jobs:
             CONTAINER_DB="postgres-adam-store"
             CONTAINER_APP="spring-adam-store"
             HEALTH_URL="https://${{ secrets.VPS_HOST }}/adamstore/actuator/health"
-            SQL_FILE="adam-store-db.sql"
+            SQL_FILE="adam_store_data.sql"
 
             echo "📁 Navigating to project directory..."
             cd $PROJECT_DIR
