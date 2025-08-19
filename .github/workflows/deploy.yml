@@ -23,23 +23,14 @@ jobs:
             set -euo pipefail
 
             PROJECT_DIR="/root/f4-microserices-vps-configuration/Spring_AdamStore"
-            DB_NAME="adam-store"
-            CONTAINER_DB="postgres-adam-store"
             CONTAINER_APP="spring-adam-store"
             HEALTH_URL="https://${{ secrets.VPS_HOST }}/adamstore/actuator/health"
-            SQL_FILE="adam_store_data.sql"
 
             echo "📁 Navigating to project directory..."
             cd $PROJECT_DIR
 
             echo "📥 Pulling latest changes from Git..."
             git pull
-
-            echo "🛢️ Starting Postgres container if not running..."
-            docker compose up -d $CONTAINER_DB
-
-            echo "🧹 Dropping and recreating schema in Postgres..."
-            docker exec $CONTAINER_DB bash -c "psql -U postgres -d $DB_NAME -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'"
 
             echo "🧼 Removing existing app container if any..."
             docker compose down $CONTAINER_APP
@@ -53,10 +44,5 @@ jobs:
               sleep 3
             done
             sleep 6
-            echo "📂 Copying SQL file to Postgres container..."
-            docker cp $SQL_FILE $CONTAINER_DB:/$SQL_FILE
-
-            echo "📥 Importing SQL data into database..."
-            docker exec $CONTAINER_DB bash -c "psql -U postgres -d $DB_NAME -f /$SQL_FILE"
 
             echo "✅ Deployment finished successfully."
