@@ -52,7 +52,7 @@ jobs:
               echo "⏳ Waiting for $CONTAINER_APP to be healthy..."
               sleep 3
             done
-            sleep 6
+            sleep 30
             echo "📂 Copying SQL file to Postgres container..."
             docker cp $SQL_FILE $CONTAINER_DB:/$SQL_FILE
 
